@@ -41,16 +41,19 @@ target_compile_definitions(${APP_LIB_NAME} PRIVATE
         MAL_NO_OSS
         )
 
+# We apply flags depending of the build type
 if(CMAKE_BUILD_TYPE MATCHES "Debug")
-    target_compile_definitions(${APP_LIB_NAME} PRIVATE _DEBUG)
+    target_compile_definitions(${APP_LIB_NAME} PRIVATE _DEBUG DEBUG)
+    set(CMAKE_CXX_FLAGS_DEBUG "-g -fno-limit-debug-info")
+    set(CMAKE_C_FLAGS_DEBUG "-g -fno-limit-debug-info")
+endif()
+if(CMAKE_BUILD_TYPE MATCHES "Release")
+    set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
+    set(CMAKE_C_FLAGS_RELEASE "-O2 -DNDEBUG")
 endif()
 
 # Includes Raylib header files
 target_include_directories(${APP_LIB_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/raylib")
-
-# We apply the level optimization options for the release compilation
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2")
-set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O2")
 
 # Link required libraries to native application
 target_link_libraries(${APP_LIB_NAME}
