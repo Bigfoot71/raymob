@@ -1,0 +1,110 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace project.properties['app.application_id']
+    compileSdk 33
+
+    defaultConfig {
+        minSdk 24
+        targetSdk 33
+
+        applicationId project.properties['app.application_id']
+        versionCode Integer.parseInt(project.properties['app.version_code'])
+        versionName project.properties['app.version_name']
+
+        // Defining the application name label
+        resValue "string", "app_name", project.properties['app.name']
+
+        // Substitution variables for the manifest
+        manifestPlaceholders = [
+            'APP_LIB_NAME': project.properties['app.native_library_name'],
+            'APP_ORIENTATION': project.properties['app.orientation']
+        ]
+
+        // Give to CMake the name of the library
+        externalNativeBuild {
+            cmake {
+                arguments "-DAPP_LIB_NAME=${project.properties['app.native_library_name']}"
+            }
+        }
+
+        // Change output names to the correct ones
+        applicationVariants.all { variant ->
+            variant.outputs.all {
+                outputFileName = outputFileName.replace("com.raylib.raymob", project.properties['app.application_id'])
+                outputFileName = outputFileName.replace("raymob", project.properties['app.native_library_name'])
+            }
+        }
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    // Execute the preBuild task before the compilation
+    preBuild.doLast {
+
+        // Modify the package name and library name in NativeLoader.java
+        def javaFilePath = "src/main/java/com/raylib/raymob/NativeLoader.java"
+        def javaFile = file(javaFilePath)
+        def javaContent = javaFile.text
+        def modifiedPackage = javaContent.replaceAll("package com.raylib.raymob;", "package " + project.properties['app.application_id'] + ";")
+        def modifiedLibrary = modifiedPackage.replaceAll("System.loadLibrary\\(\"raymob\"\\);", "System.loadLibrary\\(\"" + project.properties['app.native_library_name'] + "\"\\);")
+        javaFile.write(modifiedLibrary)
+
+        // Modify the library name in rcore.c
+        def cFilePath = "src/main/cpp/raylib/rcore.c"
+        def cFile = file(cFilePath)
+        def cContent = cFile.text
+        def modifiedClassPath = cContent.replaceAll("com/raylib/raymob", project.properties['app.application_id'].replace(".", "/"))
+        cFile.write(modifiedClassPath)
+
+    }
+
+    // Execute the postBuild task after the compilation
+    gradle.buildFinished {
+
+        // Restore the package name and library name in NativeLoader.java
+        def javaFilePath = "src/main/java/com/raylib/raymob/NativeLoader.java"
+        def javaFile = file(javaFilePath)
+        def javaContent = javaFile.text
+        def modifiedPackage = javaContent.replaceAll("package " + project.properties['app.application_id'] + ";", "package com.raylib.raymob;")
+        def modifiedLibrary = modifiedPackage.replaceAll("System.loadLibrary\\(\"" + project.properties['app.native_library_name'] + "\"\\);", "System.loadLibrary\\(\"raymob\"\\);")
+        javaFile.write(modifiedLibrary)
+
+        // Restore the library name in rcore.c
+        def cFilePath = "src/main/cpp/raylib/rcore.c"
+        def cFile = file(cFilePath)
+        def cContent = cFile.text
+        def modifiedClassPath = cContent.replaceAll(project.properties['app.application_id'].replace(".", "/"), "com/raylib/raymob")
+        cFile.write(modifiedClassPath)
+
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    externalNativeBuild {
+        cmake {
+            path file('src/main/cpp/CMakeLists.txt')
+            version '3.22.1'
+        }
+    }
+    buildFeatures {
+        viewBinding true
+    }
+}
+
+dependencies {
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+}
