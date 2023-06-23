@@ -1584,6 +1584,7 @@ RLAPI void DetachAudioMixedProcessor(AudioCallback processor); // Detach audio s
 #if defined(PLATFORM_ANDROID)
 
 #include "jni.h"
+#include "android_native_app_glue.h"
 
 RLAPI JNIEnv *AttachCurrentThread(void);
 RLAPI void DetachCurrentThread(void);
