@@ -38,6 +38,12 @@ RLAPI struct android_app *GetAndroidApp(void);
 
 These new functions enable easy calling of static and non-static public methods of your NativeLoader class from your C/C++ code, as well as accessing the `struct android_app` of your application.
 
-# Support
+## Support
 
 If you have any questions or encounter issues while using this implementation, you can seek help by submitting an issue on this repository.
+
+## Useful Links
+
+- [AdMob Integration in Raymob Gist](https://gist.github.com/Bigfoot71/b3a658458ece93ddcb06f4c78f85076a): Gist demonstrating the integration of AdMob in Raymob.
+
+_Feel free to reach out to me or open a pull request to add your repositories or gists related to Raymob if you believe they can be beneficial to others. I welcome contributions and collaborations to enhance the Raymob project and make it more valuable for the community._
