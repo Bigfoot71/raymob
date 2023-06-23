@@ -21,6 +21,7 @@ list(APPEND SOURCES
         "${CMAKE_SOURCE_DIR}/raylib/rshapes.c"
         "${CMAKE_SOURCE_DIR}/raylib/rtext.c"
         "${CMAKE_SOURCE_DIR}/raylib/rtextures.c"
+        "${CMAKE_SOURCE_DIR}/raylib/raudio.c"
         "${CMAKE_SOURCE_DIR}/raylib/utils.c"
         )
 
