@@ -52,6 +52,13 @@ android {
         def modifiedLibrary = modifiedPackage.replaceAll("System.loadLibrary\\(\"raymob\"\\);", "System.loadLibrary\\(\"" + project.properties['app.native_library_name'] + "\"\\);")
         javaFile.write(modifiedLibrary)
 
+        // Modify the package name in proguard-rules.pro
+        def proguardFilePath = "proguard-rules.pro"
+        def proguardFile = file(proguardFilePath)
+        def proguardContent = proguardFile.text
+        def modifiedProguardPackage = proguardContent.replaceAll("com.raylib.raymob", project.properties['app.application_id'])
+        proguardFile.write(modifiedProguardPackage)
+
         // Modify the library name in rcore.c
         def cFilePath = "src/main/cpp/raylib/rcore.c"
         def cFile = file(cFilePath)
@@ -71,6 +78,13 @@ android {
         def modifiedPackage = javaContent.replaceAll("package " + project.properties['app.application_id'] + ";", "package com.raylib.raymob;")
         def modifiedLibrary = modifiedPackage.replaceAll("System.loadLibrary\\(\"" + project.properties['app.native_library_name'] + "\"\\);", "System.loadLibrary\\(\"raymob\"\\);")
         javaFile.write(modifiedLibrary)
+
+        // Restore the package name in proguard-rules.pro
+        def proguardFilePath = "proguard-rules.pro"
+        def proguardFile = file(proguardFilePath)
+        def proguardContent = proguardFile.text
+        def modifiedProguardPackage = proguardContent.replaceAll(project.properties['app.application_id'], "com.raylib.raymob")
+        proguardFile.write(modifiedProguardPackage)
 
         // Restore the library name in rcore.c
         def cFilePath = "src/main/cpp/raylib/rcore.c"
