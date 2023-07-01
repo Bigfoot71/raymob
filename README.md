@@ -44,6 +44,7 @@ If you have any questions or encounter issues while using this implementation, y
 
 ## Useful Links
 
-- [AdMob Integration in Raymob Gist](https://gist.github.com/Bigfoot71/b3a658458ece93ddcb06f4c78f85076a): Gist demonstrating the integration of AdMob in Raymob.
+- [AdMob Integration in Raymob](https://gist.github.com/Bigfoot71/b3a658458ece93ddcb06f4c78f85076a): Gist demonstrating the integration of AdMob in Raymob.
+- [Using the vibration feature in Raymob](https://gist.github.com/Bigfoot71/2c89864354a9254ce555f2eca1961590): Gist explaining how to use the vibration of your device if possible.
 
 _Feel free to reach out to me or open a pull request to add your repositories or gists related to Raymob if you believe they can be beneficial to others. I welcome contributions and collaborations to enhance the Raymob project and make it more valuable for the community._
