@@ -4,6 +4,10 @@
 # Specifies the minimum required version of CMake
 cmake_minimum_required(VERSION 3.22.1)
 
+# Set C99 standard for C and C++11 standard for C++
+set(CMAKE_C_STANDARD 99)
+set(CMAKE_CXX_STANDARD 11)
+
 # Set the project name using the APP_LIB_NAME variable given by `build.gradle:app`
 project("${APP_LIB_NAME}")
 
