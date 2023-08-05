@@ -95,10 +95,19 @@ android {
     }
 
     buildTypes {
+        debug {
+            debuggable true
+            jniDebuggable true
+        }
         release {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+            debuggable false
+            jniDebuggable false
+            pseudoLocalesEnabled false
+            zipAlignEnabled true
         }
     }
     compileOptions {
