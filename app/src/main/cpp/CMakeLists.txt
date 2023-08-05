@@ -53,7 +53,7 @@ if(CMAKE_BUILD_TYPE MATCHES "Debug")
     set(CMAKE_C_FLAGS_DEBUG "-g -fno-limit-debug-info")
 endif()
 if(CMAKE_BUILD_TYPE MATCHES "Release")
-    set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
+    set(CMAKE_CXX_FLAGS_RELEASE "-O2 -DNDEBUG")
     set(CMAKE_C_FLAGS_RELEASE "-O2 -DNDEBUG")
 endif()
 
