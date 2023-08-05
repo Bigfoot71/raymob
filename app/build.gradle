@@ -38,7 +38,6 @@ android {
             }
         }
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     // Execute the preBuild task before the compilation
@@ -117,8 +116,15 @@ android {
     }
 }
 
+/*
+
+// Add your project's dependencies here.
+// This section is used to include external libraries or modules that your project relies on.
+// These dependencies will be automatically downloaded and integrated into the build process.
+// To add a new dependency, use the 'implementation' or 'api' keyword followed by the library's coordinate or name.
+
 dependencies {
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+
 }
+
+*/
