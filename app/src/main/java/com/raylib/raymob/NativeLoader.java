@@ -3,6 +3,7 @@ package com.raylib.raymob;  // Don't change the package name (see gradle.propert
 import android.app.NativeActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 
 public class NativeLoader extends NativeActivity {
 
@@ -13,6 +14,7 @@ public class NativeLoader extends NativeActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         instance = this;                        // Get this instance of NativeLoader
+        this.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setImmersiveMode();                     // Activate immersive mode
         System.loadLibrary("raymob");   // Load your game library (don't change raymob, see gradle.properties)
     }
