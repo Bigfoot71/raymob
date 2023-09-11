@@ -14,7 +14,7 @@ public class NativeLoader extends NativeActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         instance = this;                        // Get this instance of NativeLoader
-        this.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setImmersiveMode();                     // Activate immersive mode
         System.loadLibrary("raymob");   // Load your game library (don't change raymob, see gradle.properties)
     }
