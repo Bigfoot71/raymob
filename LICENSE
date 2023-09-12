@@ -1,4 +1,4 @@
-MIT License
+raymob License (MIT)
 
 Copyright (c) 2023 Le Juez Victor
 
@@ -41,3 +41,7 @@ applications, and to alter it and redistribute it freely, subject to the followi
 
   3. This notice may not be removed or altered from any source distribution.
 
+-------------------------------------------------------------------------------
+
+"raylib" refers to the raylib library, which is separately licensed under the zlib license.
+All code related to raylib is subject to the zlib license, not the MIT license.
