@@ -1,6 +1,8 @@
-# Raymob
+<img src="app/src/main/ic_launcher-playstore.png" alt="raymob icon" width="256" height="256">
 
-Raymob is a simple implementation of [raylib](https://www.raylib.com/) for Android Studio.
+# Raymob [![Targeting raylib 4.5](https://img.shields.io/badge/raylib-4.5-3DDC84)](https://raylib.com) [![Supported Platforms](https://img.shields.io/badge/Platform-Android-3DDC84)](https://developer.android.com/) [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) [![License](https://img.shields.io/badge/license-zlib%2Flibpng-blue.svg)](LICENSE)
+
+Raymob is a simple implementation of [raylib](https://www.raylib.com/) for Android.
 
 ## Prerequisites
 
@@ -38,13 +40,18 @@ RLAPI struct android_app *GetAndroidApp(void);
 
 These new functions enable easy calling of static and non-static public methods of your NativeLoader class from your C/C++ code, as well as accessing the `struct android_app` of your application.
 
-## Support
-
-If you have any questions or encounter issues while using this implementation, you can seek help by submitting an issue on this repository.
-
 ## Useful Links
 
 - [AdMob Integration in Raymob](https://gist.github.com/Bigfoot71/b3a658458ece93ddcb06f4c78f85076a): Gist demonstrating the integration of AdMob in Raymob.
 - [Using the vibration feature in Raymob](https://gist.github.com/Bigfoot71/2c89864354a9254ce555f2eca1961590): Gist explaining how to use the vibration of your device if possible.
 
-_Feel free to reach out to me or open a pull request to add your repositories or gists related to Raymob if you believe they can be beneficial to others. I welcome contributions and collaborations to enhance the Raymob project and make it more valuable for the community._
+## Contributions
+
+If you believe that your repositories or gists related to Raymob can be beneficial to others, please feel free to reach out to me or open a pull request to have them added here.
+I welcome contributions and collaborations to enhance the Raymob project and make it more valuable for the community.
+
+You can also contribute to the project by reporting issues, suggesting improvements, or helping to document the project. Your input is highly appreciated!
+
+### Support
+
+If you have any questions or encounter problems when using this implementation, please do not hesitate to ask for help by submitting an issue on this repository, this may help other users.
