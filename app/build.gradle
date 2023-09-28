@@ -20,19 +20,19 @@ android {
         versionCode Integer.parseInt(project.properties['app.version_code'])
         versionName project.properties['app.version_name']
 
-        // Defining the application name label
+        // Defining the application name label (to the resources)
         resValue "string", "app_name", project.properties['app.name']
-
-        // Reads feature properties from gradle.properties and registers them as resources
-        resValue "bool", "use_vibration", project.properties['features.vibration']
 
         // Generates a build configuration based on the requested features in gradle.properties
         buildConfigField("boolean", "FEATURE_VIBRATION", project.properties['features.vibration'] ?: "false")
+        buildConfigField("boolean", "FEATURE_ACCELEROMETER", project.properties['features.accelerometer'] ?: "false")
 
         // Substitution variables for the manifest
         manifestPlaceholders = [
             'APP_LIB_NAME': project.properties['app.native_library_name'],
-            'APP_ORIENTATION': project.properties['app.orientation']
+            'APP_ORIENTATION': project.properties['app.orientation'],
+            'FEATURE_VIBRATION': project.properties['features.vibration'],
+            'FEATURE_ACCELEROMETER': project.properties['features.accelerometer']
         ]
 
         // Give to CMake the name of the library
@@ -51,10 +51,13 @@ android {
             }
 
             // Deletion of unused feature class files from the output directory
-            if (!project.properties['features.vibration']) {
-                variant.mergeResourcesProvider.configure {
-                    doLast {
+            variant.mergeResourcesProvider.configure {
+                doLast {
+                    if (!project.properties['features.vibration']) {
                         delete(fileTree(dir: variant.mergeResources.outputDir, includes: ['**/Vibration*.class']))
+                    }
+                    if (!project.properties['features.accelerometer']) {
+                        delete(fileTree(dir: variant.mergeResources.outputDir, includes: ['**/Accelerometer*.class']))
                     }
                 }
             }

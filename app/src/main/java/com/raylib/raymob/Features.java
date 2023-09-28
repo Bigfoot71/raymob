@@ -22,23 +22,55 @@
  *  SOFTWARE.
  */
 
+// TODO: Replaced method duplications with
+//  interfaces and null object pattern (?)
+
 package com.raylib.raymob;
 
 import android.content.Context;
 import com.raylib.features.Vibration;
+import com.raylib.features.Accelerometer;
 
 public class Features {
 
     private final Vibration vibrator;
+    private final Accelerometer accelerometer;
 
     public Features(Context context) {
         vibrator = BuildConfig.FEATURE_VIBRATION ? new Vibration(context) : null;
+        accelerometer = BuildConfig.FEATURE_ACCELEROMETER ? new Accelerometer(context) : null;
     }
 
-    /* Features methods */
+    /* VIBRATION */
 
     public void vibrate(float seconds) {
         if (vibrator != null) vibrator.vibrate(seconds);
     }
+
+    /* ACCELEROMETER */
+
+    public void startAccelerometerListening() {
+        if (accelerometer != null) accelerometer.startListening();
+    }
+
+    public void stopAccelerometerListening() {
+        if (accelerometer != null) accelerometer.stopListening();
+    }
+
+    public float getAccelerometerX() {
+        if (accelerometer != null) return accelerometer.getX();
+        return 0;
+    }
+
+    public float getAccelerometerY() {
+        if (accelerometer != null) return accelerometer.getY();
+        return 0;
+    }
+
+    public float getAccelerometerZ() {
+        if (accelerometer != null) return accelerometer.getZ();
+        return 0;
+    }
+
 
 }

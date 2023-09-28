@@ -5,8 +5,14 @@
     <uses-feature android:glEsVersion="0x00020000" android:required="true" />
 
     <!-- Conditionally include permission features -->
+
     <uses-permission android:name="android.permission.VIBRATE"
-        android:required="@bool/use_vibration" />
+        android:required="${FEATURE_VIBRATION}" />
+
+    <uses-feature android:name="android.hardware.sensor.accelerometer"
+        android:required="${FEATURE_ACCELEROMETER}" />
+
+    <!-- Application config -->
 
     <application
         android:allowBackup="false"

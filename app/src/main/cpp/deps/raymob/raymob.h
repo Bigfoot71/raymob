@@ -48,6 +48,13 @@ RMBAPI jobject GetFeaturesInstance(void);
 
 RMBAPI void Vibrate(float sec);
 
+RMBAPI void StartAccelerometerListening(void);
+RMBAPI void StopAccelerometerListening(void);
+RMBAPI Vector3 GetAccelerometerAxis(void);
+RMBAPI float GetAccelerometerX(void);
+RMBAPI float GetAccelerometerY(void);
+RMBAPI float GetAccelerometerZ(void);
+
 #if defined(__cplusplus)
 }
 #endif

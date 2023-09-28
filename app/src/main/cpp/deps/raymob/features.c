@@ -24,7 +24,7 @@
 
 #include "raymob.h"
 
-/* Functions definition */
+/* VIBRATION */
 
 void Vibrate(float sec)
 {
@@ -38,4 +38,116 @@ void Vibrate(float sec)
             (*env)->CallVoidMethod(env, featuresInstance, method, (jfloat)sec);
         DetachCurrentThread();
     }
+}
+
+/* ACCELEROMETER */
+
+void StartAccelerometerListening(void)
+{
+    jobject featuresInstance = GetFeaturesInstance();
+
+    if (featuresInstance != NULL)
+    {
+        JNIEnv* env = AttachCurrentThread();
+            jclass nativeLoaderClass = (*env)->GetObjectClass(env, featuresInstance);
+            jmethodID method = (*env)->GetMethodID(env, nativeLoaderClass, "startAccelerometerListening", "()V");
+            (*env)->CallVoidMethod(env, featuresInstance, method);
+        DetachCurrentThread();
+    }
+}
+
+void StopAccelerometerListening(void)
+{
+    jobject featuresInstance = GetFeaturesInstance();
+
+    if (featuresInstance != NULL)
+    {
+        JNIEnv* env = AttachCurrentThread();
+            jclass nativeLoaderClass = (*env)->GetObjectClass(env, featuresInstance);
+            jmethodID method = (*env)->GetMethodID(env, nativeLoaderClass, "stopAccelerometerListening", "()V");
+            (*env)->CallVoidMethod(env, featuresInstance, method);
+        DetachCurrentThread();
+    }
+}
+
+Vector3 GetAccelerometerAxis(void)
+{
+    jobject featuresInstance = GetFeaturesInstance();
+
+    if (featuresInstance != NULL)
+    {
+        JNIEnv* env = AttachCurrentThread();
+
+            jclass nativeLoaderClass = (*env)->GetObjectClass(env, featuresInstance);
+
+            jmethodID methodX = (*env)->GetMethodID(env, nativeLoaderClass, "getAccelerometerX", "()F");
+            jmethodID methodY = (*env)->GetMethodID(env, nativeLoaderClass, "getAccelerometerY", "()F");
+            jmethodID methodZ = (*env)->GetMethodID(env, nativeLoaderClass, "getAccelerometerZ", "()F");
+
+            Vector3 value = {
+                (*env)->CallFloatMethod(env, featuresInstance, methodX),
+                (*env)->CallFloatMethod(env, featuresInstance, methodY),
+                (*env)->CallFloatMethod(env, featuresInstance, methodZ)
+            };
+
+        DetachCurrentThread();
+
+        return value;
+    }
+
+    return (Vector3) {0};
+}
+
+float GetAccelerometerX(void)
+{
+    jobject featuresInstance = GetFeaturesInstance();
+
+    if (featuresInstance != NULL)
+    {
+        JNIEnv* env = AttachCurrentThread();
+            jclass nativeLoaderClass = (*env)->GetObjectClass(env, featuresInstance);
+            jmethodID method = (*env)->GetMethodID(env, nativeLoaderClass, "getAccelerometerX", "()F");
+            float value = (*env)->CallFloatMethod(env, featuresInstance, method);
+        DetachCurrentThread();
+
+        return value;
+    }
+
+    return 0;
+}
+
+float GetAccelerometerY(void)
+{
+    jobject featuresInstance = GetFeaturesInstance();
+
+    if (featuresInstance != NULL)
+    {
+        JNIEnv* env = AttachCurrentThread();
+            jclass nativeLoaderClass = (*env)->GetObjectClass(env, featuresInstance);
+            jmethodID method = (*env)->GetMethodID(env, nativeLoaderClass, "getAccelerometerY", "()F");
+            float value = (*env)->CallFloatMethod(env, featuresInstance, method);
+        DetachCurrentThread();
+
+        return value;
+    }
+
+    return 0;
+}
+
+float GetAccelerometerZ(void)
+{
+    jobject featuresInstance = GetFeaturesInstance();
+
+    if (featuresInstance != NULL)
+    {
+        JNIEnv* env = AttachCurrentThread();
+            jclass nativeLoaderClass = (*env)->GetObjectClass(env, featuresInstance);
+            jmethodID method = (*env)->GetMethodID(env, nativeLoaderClass, "getAccelerometerZ", "()F");
+            float value = (*env)->CallFloatMethod(env, featuresInstance, method);
+        DetachCurrentThread();
+
+        return value;
+    }
+
+    return 0;
 }
