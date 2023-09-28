@@ -24,49 +24,18 @@
 
 #include "raymob.h"
 
-/* Static variables */
-
-static jobject featuresInstance = NULL;
-
 /* Functions definition */
 
-JNIEnv* AttachCurrentThread(void)
+void Vibrate(float sec)
 {
-    JavaVM *vm = GetAndroidApp()->activity->vm;
-    JNIEnv *env;
+    jobject featuresInstance = GetFeaturesInstance();
 
-    (*vm)->AttachCurrentThread(vm, &env, NULL);
-    return env;
-}
-
-void DetachCurrentThread(void)
-{
-    JavaVM *vm = GetAndroidApp()->activity->vm;
-    (*vm)->DetachCurrentThread(vm);
-}
-
-jobject GetNativeLoaderInstance(void)
-{
-    return GetAndroidApp()->activity->clazz;
-}
-
-jobject GetFeaturesInstance(void)
-{
-    if (featuresInstance == NULL)
+    if (featuresInstance != NULL)
     {
-        JNIEnv *env = AttachCurrentThread();
-        jobject nativeLoaderInstance = GetNativeLoaderInstance();
-
-        jclass nativeLoaderClass = (*env)->GetObjectClass(env, nativeLoaderInstance);
-        jmethodID getFeaturesMethod = (*env)->GetMethodID(env, nativeLoaderClass, "getFeatures", "()Lcom/raylib/raymob/Features;");
-
-        if (getFeaturesMethod == NULL) return NULL; // Handle the case where the method is not found
-
-        jobject localFeaturesInstance = (*env)->CallObjectMethod(env, nativeLoaderInstance, getFeaturesMethod);
-        featuresInstance = (*env)->NewGlobalRef(env, localFeaturesInstance);
-
+        JNIEnv* env = AttachCurrentThread();
+            jclass nativeLoaderClass = (*env)->GetObjectClass(env, featuresInstance);
+            jmethodID method = (*env)->GetMethodID(env, nativeLoaderClass, "vibrate", "(F)V");
+            (*env)->CallVoidMethod(env, featuresInstance, method, (jfloat)sec);
         DetachCurrentThread();
     }
-
-    return featuresInstance;
 }

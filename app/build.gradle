@@ -2,6 +2,12 @@ plugins {
     id 'com.android.application'
 }
 
+def updateFile(filePath, toReplace, replacement) {
+    def file = file(filePath)
+    def modifiedContent = file.text.replaceAll(toReplace, replacement)
+    file.write(modifiedContent)
+}
+
 android {
     namespace project.properties['app.application_id']
     compileSdk 33
@@ -17,6 +23,12 @@ android {
         // Defining the application name label
         resValue "string", "app_name", project.properties['app.name']
 
+        // Reads feature properties from gradle.properties and registers them as resources
+        resValue "bool", "use_vibration", project.properties['features.vibration']
+
+        // Generates a build configuration based on the requested features in gradle.properties
+        buildConfigField("boolean", "FEATURE_VIBRATION", project.properties['features.vibration'] ?: "false")
+
         // Substitution variables for the manifest
         manifestPlaceholders = [
             'APP_LIB_NAME': project.properties['app.native_library_name'],
@@ -30,12 +42,23 @@ android {
             }
         }
 
-        // Change output names to the correct ones
         applicationVariants.all { variant ->
+
+            // Change output names to the correct ones
             variant.outputs.all {
                 outputFileName = outputFileName.replace("com.raylib.raymob", project.properties['app.application_id'])
                 outputFileName = outputFileName.replace("raymob", project.properties['app.native_library_name'])
             }
+
+            // Deletion of unused feature class files from the output directory
+            if (!project.properties['features.vibration']) {
+                variant.mergeResourcesProvider.configure {
+                    doLast {
+                        delete(fileTree(dir: variant.mergeResources.outputDir, includes: ['**/Vibration*.class']))
+                    }
+                }
+            }
+
         }
 
     }
@@ -44,26 +67,17 @@ android {
     preBuild.doLast {
 
         // Modify the package name and library name in NativeLoader.java
-        def javaFilePath = "src/main/java/com/raylib/raymob/NativeLoader.java"
-        def javaFile = file(javaFilePath)
-        def javaContent = javaFile.text
-        def modifiedPackage = javaContent.replaceAll("package com.raylib.raymob;", "package " + project.properties['app.application_id'] + ";")
-        def modifiedLibrary = modifiedPackage.replaceAll("System.loadLibrary\\(\"raymob\"\\);", "System.loadLibrary\\(\"" + project.properties['app.native_library_name'] + "\"\\);")
-        javaFile.write(modifiedLibrary)
+        updateFile("src/main/java/com/raylib/raymob/NativeLoader.java", "package com.raylib.raymob;", "package " + project.properties['app.application_id'] + ";")
+        updateFile("src/main/java/com/raylib/raymob/NativeLoader.java", "System.loadLibrary\\(\"raymob\"\\);", "System.loadLibrary\\(\"" + project.properties['app.native_library_name'] + "\"\\);")
+
+        // Modify the package name in raymob/Features.java
+        updateFile("src/main/java/com/raylib/raymob/Features.java", "package com.raylib.raymob;", "package " + project.properties['app.application_id'] + ";")
 
         // Modify the package name in proguard-rules.pro
-        def proguardFilePath = "proguard-rules.pro"
-        def proguardFile = file(proguardFilePath)
-        def proguardContent = proguardFile.text
-        def modifiedProguardPackage = proguardContent.replaceAll("com.raylib.raymob", project.properties['app.application_id'])
-        proguardFile.write(modifiedProguardPackage)
+        updateFile("proguard-rules.pro", "com.raylib.raymob", project.properties['app.application_id'])
 
         // Modify the library name in raymob/helper.c
-        def cFilePath = "src/main/cpp/deps/raymob/helper.c"
-        def cFile = file(cFilePath)
-        def cContent = cFile.text
-        def modifiedClassPath = cContent.replaceAll("com/raylib/raymob", project.properties['app.application_id'].replace(".", "/"))
-        cFile.write(modifiedClassPath)
+        updateFile("src/main/cpp/deps/raymob/helper.c", "com/raylib/raymob", project.properties['app.application_id'].replace(".", "/"))
 
     }
 
@@ -71,26 +85,17 @@ android {
     gradle.buildFinished {
 
         // Restore the package name and library name in NativeLoader.java
-        def javaFilePath = "src/main/java/com/raylib/raymob/NativeLoader.java"
-        def javaFile = file(javaFilePath)
-        def javaContent = javaFile.text
-        def modifiedPackage = javaContent.replaceAll("package " + project.properties['app.application_id'] + ";", "package com.raylib.raymob;")
-        def modifiedLibrary = modifiedPackage.replaceAll("System.loadLibrary\\(\"" + project.properties['app.native_library_name'] + "\"\\);", "System.loadLibrary\\(\"raymob\"\\);")
-        javaFile.write(modifiedLibrary)
+        updateFile("src/main/java/com/raylib/raymob/NativeLoader.java", "package " + project.properties['app.application_id'] + ";", "package com.raylib.raymob;")
+        updateFile("src/main/java/com/raylib/raymob/NativeLoader.java", "System.loadLibrary\\(\"" + project.properties['app.native_library_name'] + "\"\\);", "System.loadLibrary\\(\"raymob\"\\);")
+
+        // Restore the package name in raymob/Features.java
+        updateFile("src/main/java/com/raylib/raymob/Features.java", "package com.raylib.raymob;", "package " + project.properties['app.application_id'] + ";")
 
         // Restore the package name in proguard-rules.pro
-        def proguardFilePath = "proguard-rules.pro"
-        def proguardFile = file(proguardFilePath)
-        def proguardContent = proguardFile.text
-        def modifiedProguardPackage = proguardContent.replaceAll(project.properties['app.application_id'], "com.raylib.raymob")
-        proguardFile.write(modifiedProguardPackage)
+        updateFile("proguard-rules.pro", project.properties['app.application_id'], "com.raylib.raymob")
 
         // Restore the library name in raymob/helper.c
-        def cFilePath = "src/main/cpp/deps/raymob/helper.c"
-        def cFile = file(cFilePath)
-        def cContent = cFile.text
-        def modifiedClassPath = cContent.replaceAll(project.properties['app.application_id'].replace(".", "/"), "com/raylib/raymob")
-        cFile.write(modifiedClassPath)
+        updateFile("src/main/cpp/deps/raymob/helper.c", project.properties['app.application_id'].replace(".", "/"), "com/raylib/raymob")
 
     }
 
@@ -121,6 +126,7 @@ android {
         }
     }
     buildFeatures {
+        buildConfig true
         viewBinding true
     }
 }

@@ -29,19 +29,21 @@ This template can be customized to meet your specific needs. You can add depende
 
 ## Additional Information
 
-This project contains a slightly modified version of raylib 4.5, which notably includes the addition of a function already present in raylib's API that allows you to obtain `struct android_app` from your native Android application (see [documentation](https://developer.android.com/reference/games/game-activity/structandroid/app)):
+Within this project, you'll find a slightly modified version of raylib 4.5. One notable modification is the inclusion of a new function in raylib's API that allows you to retrieve the `struct android_app` from your native Android application. You can find detailed information about this function in the [documentation](https://developer.android.com/reference/games/game-activity/structandroid/app). Here's how you can use it:
+
 ```c
 RLAPI struct android_app *GetAndroidApp(void);
 ```
 
-It also includes the addition of the header `raymob.h`, which can replace `raylib.h` and adds these functions:
+Furthermore, a new header file has been added called `raymob.h` which can be used as a replacement for `raylib.h`. It introduces the following additional functions:
+
 ```c
 RMBAPI JNIEnv* AttachCurrentThread(void);
 RMBAPI void DetachCurrentThread(void);
 RMBAPI jobject GetNativeLoaderInstance(void);
 ```
 
-These new functions enable easy calling of static and non-static public methods of your NativeLoader class from your C/C++ code, as well as accessing the `struct android_app` of your application.
+These new functions simplify the process of invoking both static and non-static public methods of your NativeLoader class from your C/C++ code. Additionally, they provide easy access to the `struct android_app` associated with your application.
 
 ## Useful Links
 

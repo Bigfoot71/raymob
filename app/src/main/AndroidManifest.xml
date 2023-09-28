@@ -4,6 +4,10 @@
 
     <uses-feature android:glEsVersion="0x00020000" android:required="true" />
 
+    <!-- Conditionally include permission features -->
+    <uses-permission android:name="android.permission.VIBRATE"
+        android:required="@bool/use_vibration" />
+
     <application
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"

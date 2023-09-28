@@ -22,34 +22,23 @@
  *  SOFTWARE.
  */
 
-#ifndef RAYMOB_H
-#define RAYMOB_H
+package com.raylib.features;
 
-#include "jni.h"
-#include "raylib.h"
+import android.content.Context;
+import android.os.Vibrator;
 
-#ifndef RMBAPI
-#define RMBAPI
-#endif
+public class Vibration {
 
-#if defined(__cplusplus)
-extern "C" {
-#endif
+    private final Vibrator vibrator;
 
-/* Helper functions */
+    public Vibration(Context context) {
+        vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+    }
 
-RMBAPI JNIEnv* AttachCurrentThread(void);
-RMBAPI void DetachCurrentThread(void);
+    public void vibrate(float seconds) {
+        if (vibrator != null && vibrator.hasVibrator()) {
+            vibrator.vibrate((long)(seconds * 1000));
+        }
+    }
 
-RMBAPI jobject GetNativeLoaderInstance(void);
-RMBAPI jobject GetFeaturesInstance(void);
-
-/* Feature functions */
-
-RMBAPI void Vibrate(float sec);
-
-#if defined(__cplusplus)
 }
-#endif
-
-#endif //RAYMOB_H
