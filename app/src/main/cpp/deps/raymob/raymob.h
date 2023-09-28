@@ -28,16 +28,20 @@
 #include "jni.h"
 #include "raylib.h"
 
+#ifndef RMBAPI
+#define RMBAPI
+#endif
+
 #if defined(__cplusplus)
 extern "C" {
 #endif
 
 /* Helper functions */
 
-JNIEnv *AttachCurrentThread(void);
-void DetachCurrentThread(void);
+RMBAPI JNIEnv* AttachCurrentThread(void);
+RMBAPI void DetachCurrentThread(void);
 
-jobject GetNativeLoaderInstance(void);
+RMBAPI jobject GetNativeLoaderInstance(void);
 
 #if defined(__cplusplus)
 }

@@ -32,7 +32,7 @@ static jobject nativeLoaderInstance = NULL;
 
 JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* vm, void* reserved)
 {
-    JNIEnv* env;
+    JNIEnv *env;
 
     if ((*vm)->GetEnv(vm, (void**)&env, JNI_VERSION_1_6) != JNI_OK)
     {
@@ -58,13 +58,13 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* vm, void* reserved)
 
 JNIEXPORT void JNICALL JNI_OnUnload(JavaVM* vm, void* reserved)
 {
-    JNIEnv* jniEnv;
+    JNIEnv *env;
 
-    if ((*vm)->GetEnv(vm, (void**)&jniEnv, JNI_VERSION_1_6) == JNI_OK) // not tested, not called (?)
+    if ((*vm)->GetEnv(vm, (void**)&env, JNI_VERSION_1_6) == JNI_OK) // not tested, not called (?)
     {
         if (nativeLoaderInstance != NULL)
         {
-            (*jniEnv)->DeleteGlobalRef(jniEnv, nativeLoaderInstance);
+            (*env)->DeleteGlobalRef(env, nativeLoaderInstance);
             nativeLoaderInstance = NULL;
         }
     }
@@ -74,7 +74,7 @@ JNIEXPORT void JNICALL JNI_OnUnload(JavaVM* vm, void* reserved)
 
 JNIEnv* AttachCurrentThread(void)
 {
-    JavaVM* vm = GetAndroidApp()->activity->vm;
+    JavaVM *vm = GetAndroidApp()->activity->vm;
     JNIEnv *env;
 
     (*vm)->AttachCurrentThread(vm, &env, NULL);
@@ -83,7 +83,7 @@ JNIEnv* AttachCurrentThread(void)
 
 void DetachCurrentThread(void)
 {
-    JavaVM* vm = GetAndroidApp()->activity->vm;
+    JavaVM *vm = GetAndroidApp()->activity->vm;
     (*vm)->DetachCurrentThread(vm);
 }
 
