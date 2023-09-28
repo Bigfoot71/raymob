@@ -707,46 +707,6 @@ const char *TextFormat(const char *text, ...);       // Formatting of text with 
 // Module Functions Definition - Window and OpenGL Context Functions
 //----------------------------------------------------------------------------------
 #if defined(PLATFORM_ANDROID)
-
-static JavaVM* jvm = NULL;
-static jobject nativeLoaderInstance;
-
-JNIEXPORT jint JNI_OnLoad(JavaVM* vm, void* reserved)
-{
-    JNIEnv* env;
-
-    if ((*vm)->GetEnv(vm, (void **)&env, JNI_VERSION_1_6) != JNI_OK)
-    {
-        return JNI_ERR;
-    }
-
-    jvm = vm;
-
-    jclass nativeLoaderClass = (*env)->FindClass(env, "com/raylib/raymob/NativeLoader");
-    jmethodID getInstanceMethod = (*env)->GetStaticMethodID(env, nativeLoaderClass, "getInstance", "()Lcom/raylib/raymob/NativeLoader;");
-    jobject instance = (*env)->CallStaticObjectMethod(env, nativeLoaderClass, getInstanceMethod);
-    nativeLoaderInstance = (*env)->NewGlobalRef(env, instance);
-
-    return JNI_VERSION_1_6;
-}
-
-JNIEnv *AttachCurrentThread(void)
-{
-    JNIEnv *env;
-    (*jvm)->AttachCurrentThread(jvm, &env, NULL);
-    return env;
-}
-
-void DetachCurrentThread(void)
-{
-    (*jvm)->DetachCurrentThread(jvm);
-}
-
-const jobject GetNativeLoaderInstance(void)
-{
-    return nativeLoaderInstance;
-}
-
 // To allow easier porting to android, we allow the user to define a
 // main function which we call from android_main, defined by ourselves
 extern int main(int argc, char *argv[]);
@@ -756,7 +716,7 @@ void android_main(struct android_app *app)
     char arg0[] = "raylib";     // NOTE: argv[] are mutable
     CORE.Android.app = app;
 
-    // NOTE: Ignore return of main
+    // NOTE: Return from main is ignored
     (void)main(1, (char *[]) { arg0, NULL });
 
     // Request to end the native activity
@@ -767,20 +727,12 @@ void android_main(struct android_app *app)
     int pollEvents = 0;
 
     // Waiting for application events before complete finishing
-    while (!CORE.Android.app->destroyRequested)
+    while (!app->destroyRequested)
     {
         while ((pollResult = ALooper_pollAll(0, NULL, &pollEvents, (void **)&CORE.Android.source)) >= 0)
         {
-            if (CORE.Android.source != NULL) CORE.Android.source->process(CORE.Android.app, CORE.Android.source);
+            if (CORE.Android.source != NULL) CORE.Android.source->process(app, CORE.Android.source);
         }
-    }
-
-    // Free reference of nativeLoaderInstance
-    if (nativeLoaderInstance != NULL) {
-        JNIEnv *env = AttachCurrentThread();
-        (*env)->DeleteGlobalRef(env, nativeLoaderInstance);
-        nativeLoaderInstance = NULL;
-        DetachCurrentThread();
     }
 }
 
@@ -5715,9 +5667,9 @@ static void AndroidCommandCallback(struct android_app *app, int32_t cmd)
                     // context rebinding if the screen is scaled unless offsets are added. There's probably a more
                     // appropriate way to fix this
                     ANativeWindow_setBuffersGeometry(app->window,
-                        CORE.Window.render.width + CORE.Window.renderOffset.x,
-                        CORE.Window.render.height + CORE.Window.renderOffset.y,
-                        displayFormat);
+                                                     CORE.Window.render.width + CORE.Window.renderOffset.x,
+                                                     CORE.Window.render.height + CORE.Window.renderOffset.y,
+                                                     displayFormat);
 
                     // Recreate display surface and re-attach OpenGL context
                     CORE.Window.surface = eglCreateWindowSurface(CORE.Window.device, CORE.Window.config, app->window, NULL);
@@ -5780,24 +5732,29 @@ static void AndroidCommandCallback(struct android_app *app, int32_t cmd)
         } break;
         case APP_CMD_TERM_WINDOW:
         {
-            // Dettach OpenGL context and destroy display surface
-            // NOTE 1: Detaching context before destroying display surface avoids losing our resources (textures, shaders, VBOs...)
-            // NOTE 2: In some cases (too many context loaded), OS could unload context automatically... :(
-            eglMakeCurrent(CORE.Window.device, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-            eglDestroySurface(CORE.Window.device, CORE.Window.surface);
+            // Detach OpenGL context and destroy display surface
+            // NOTE 1: This case is used when the user exits the app without closing it. We detach the context to ensure everything is recoverable upon resuming.
+            // NOTE 2: Detaching context before destroying display surface avoids losing our resources (textures, shaders, VBOs...)
+            // NOTE 3: In some cases (too many context loaded), OS could unload context automatically... :(
+            if (CORE.Window.device != EGL_NO_DISPLAY)
+            {
+                eglMakeCurrent(CORE.Window.device, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
 
-            CORE.Android.contextRebindRequired = true;
+                if (CORE.Window.surface != EGL_NO_SURFACE)
+                {
+                    eglDestroySurface(CORE.Window.device, CORE.Window.surface);
+                    CORE.Window.surface = EGL_NO_SURFACE;
+                }
+
+                CORE.Android.contextRebindRequired = true;
+            }
+            // If 'CORE.Window.device' is already set to 'EGL_NO_DISPLAY'
+            // this means that the user has already called 'CloseWindow()'
+
         } break;
         case APP_CMD_SAVE_STATE: break;
         case APP_CMD_STOP: break;
-        case APP_CMD_DESTROY:
-        {
-            // NOTE: Exit here because a bug occurs when closing the application,
-            // if the user has not completely closed it himself, it remains open
-            // and this prevents it from being reopened afterwards. EGL_BAD_DISPLAY
-            // TODO: Found a better solution to close the application
-            exit(0);
-        } break;
+        case APP_CMD_DESTROY: break;
         case APP_CMD_CONFIG_CHANGED:
         {
             //AConfiguration_fromAssetManager(CORE.Android.app->config, CORE.Android.app->activity->assetManager);

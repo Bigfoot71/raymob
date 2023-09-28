@@ -11,8 +11,9 @@ set(CMAKE_CXX_STANDARD 11)
 # Set the project name based on the name given on the gradle.properties
 project("${APP_LIB_NAME}")
 
-# Include raylib as a subdirectory
+# Include raylib and raymob as a subdirectories
 add_subdirectory(${CMAKE_SOURCE_DIR}/deps/raylib)
+add_subdirectory(${CMAKE_SOURCE_DIR}/deps/raymob)
 
 # Fetch all source files for your project (recursively), excluding 'deps' source files
 file(GLOB_RECURSE SOURCES "${CMAKE_SOURCE_DIR}/*.c" "${CMAKE_SOURCE_DIR}/*.cpp")
@@ -27,8 +28,8 @@ list(APPEND SOURCES ${ANDROID_NDK}/sources/android/native_app_glue/android_nativ
 # Create a shared library with game source files
 add_library(${APP_LIB_NAME} SHARED ${SOURCES})
 
-# Define compiler macros for the library (same as raylib)
-target_compile_definitions(${APP_LIB_NAME} PRIVATE ${RAYLIB_COMPILE_DEFINITIONS})
+# Define compiler macros for the library
+target_compile_definitions(${APP_LIB_NAME} PRIVATE PLATFORM_ANDROID)
 
 # Apply flags depending on the build type
 if(CMAKE_BUILD_TYPE MATCHES "Debug")
@@ -40,8 +41,9 @@ elseif(CMAKE_BUILD_TYPE MATCHES "Release")
     set(CMAKE_C_FLAGS_RELEASE "-O2 -DNDEBUG")
 endif()
 
-# Include raylib header files
+# Include raylib and raymob header files
 target_include_directories(${APP_LIB_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/deps/raylib")
+target_include_directories(${APP_LIB_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/deps/raymob")
 
 # Link required libraries to the native application
-target_link_libraries(${APP_LIB_NAME} raylib)
+target_link_libraries(${APP_LIB_NAME} raylib raymoblib)

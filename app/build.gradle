@@ -58,8 +58,8 @@ android {
         def modifiedProguardPackage = proguardContent.replaceAll("com.raylib.raymob", project.properties['app.application_id'])
         proguardFile.write(modifiedProguardPackage)
 
-        // Modify the library name in rcore.c
-        def cFilePath = "src/main/cpp/deps/raylib/rcore.c"
+        // Modify the library name in raymob/helper.c
+        def cFilePath = "src/main/cpp/deps/raymob/helper.c"
         def cFile = file(cFilePath)
         def cContent = cFile.text
         def modifiedClassPath = cContent.replaceAll("com/raylib/raymob", project.properties['app.application_id'].replace(".", "/"))
@@ -85,8 +85,8 @@ android {
         def modifiedProguardPackage = proguardContent.replaceAll(project.properties['app.application_id'], "com.raylib.raymob")
         proguardFile.write(modifiedProguardPackage)
 
-        // Restore the library name in rcore.c
-        def cFilePath = "src/main/cpp/deps/raylib/rcore.c"
+        // Restore the library name in raymob/helper.c
+        def cFilePath = "src/main/cpp/deps/raymob/helper.c"
         def cFile = file(cFilePath)
         def cContent = cFile.text
         def modifiedClassPath = cContent.replaceAll(project.properties['app.application_id'].replace(".", "/"), "com/raylib/raymob")
