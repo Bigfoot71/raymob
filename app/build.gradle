@@ -31,6 +31,7 @@ android {
         manifestPlaceholders = [
             'APP_LIB_NAME': project.properties['app.native_library_name'],
             'APP_ORIENTATION': project.properties['app.orientation'],
+            'FEATURE_INTERNET': project.properties['features.internet'],
             'FEATURE_VIBRATION': project.properties['features.vibration'],
             'FEATURE_ACCELEROMETER': project.properties['features.accelerometer']
         ]

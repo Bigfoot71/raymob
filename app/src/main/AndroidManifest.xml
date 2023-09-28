@@ -6,6 +6,9 @@
 
     <!-- Conditionally include permission features -->
 
+    <uses-permission android:name="android.permission.INTERNET"
+        android:required="${FEATURE_INTERNET}" />
+
     <uses-permission android:name="android.permission.VIBRATE"
         android:required="${FEATURE_VIBRATION}" />
 
