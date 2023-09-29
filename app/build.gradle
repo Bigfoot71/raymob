@@ -97,7 +97,7 @@ android {
         updateFile("src/main/java/com/raylib/raymob/NativeLoader.java", "System.loadLibrary\\(\"" + project.properties['app.native_library_name'] + "\"\\);", "System.loadLibrary\\(\"raymob\"\\);")
 
         // Restore the package name in raymob/Features.java
-        updateFile("src/main/java/com/raylib/raymob/Features.java", "package com.raylib.raymob;", "package " + project.properties['app.application_id'] + ";")
+        updateFile("src/main/java/com/raylib/raymob/Features.java", "package " + project.properties['app.application_id'] + ";", "package com.raylib.raymob;")
 
         // Restore the package name in proguard-rules.pro
         updateFile("proguard-rules.pro", project.properties['app.application_id'], "com.raylib.raymob")
