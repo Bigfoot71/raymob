@@ -200,7 +200,7 @@ bool IsSoftKeyboardActive(void)
     return false;
 }
 
-int GetLastSoftKeyPressed(void)
+int GetLastSoftKeyCode(void)
 {
     jobject featuresInstance = GetFeaturesInstance();
 
@@ -216,4 +216,54 @@ int GetLastSoftKeyPressed(void)
     }
 
     return 0;
+}
+
+char GetLastSoftKeyChar(void)
+{
+    jobject featuresInstance = GetFeaturesInstance();
+
+    if (featuresInstance != NULL)
+    {
+        JNIEnv* env = AttachCurrentThread();
+                jclass featuresClass = (*env)->GetObjectClass(env, featuresInstance);
+                jmethodID method = (*env)->GetMethodID(env, featuresClass, "getLastKeyChar", "()C");
+                char value = (char)((*env)->CallCharMethod(env, featuresInstance, method));             // NOTE: Convert a jchar (unsidned short) to C-char (?)
+        DetachCurrentThread();
+
+        return value;
+    }
+
+    return '\0';
+}
+
+int GetLastSoftKeyUnicode(void)
+{
+    jobject featuresInstance = GetFeaturesInstance();
+
+    if (featuresInstance != NULL)
+    {
+        JNIEnv* env = AttachCurrentThread();
+            jclass featuresClass = (*env)->GetObjectClass(env, featuresInstance);
+            jmethodID method = (*env)->GetMethodID(env, featuresClass, "getLastKeyUnicode", "()I");
+            int value = (*env)->CallIntMethod(env, featuresInstance, method);
+        DetachCurrentThread();
+
+        return value;
+    }
+
+    return 0;
+}
+
+void ClearLastSoftKey(void)
+{
+    jobject featuresInstance = GetFeaturesInstance();
+
+    if (featuresInstance != NULL)
+    {
+        JNIEnv* env = AttachCurrentThread();
+            jclass featuresClass = (*env)->GetObjectClass(env, featuresInstance);
+            jmethodID method = (*env)->GetMethodID(env, featuresClass, "clearLastKeyEvent", "()V");
+            (*env)->CallVoidMethod(env, featuresInstance, method);
+        DetachCurrentThread();
+    }
 }

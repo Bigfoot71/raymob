@@ -33,7 +33,7 @@ public class SoftKeyboard {
 
     private final Context context;
     private final InputMethodManager imm;
-    private int lastKeyCode = KeyEvent.KEYCODE_UNKNOWN;
+    private KeyEvent lastKeyEvent = null;
 
     public SoftKeyboard(Context context) {
         imm = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -55,14 +55,27 @@ public class SoftKeyboard {
     }
 
     public int getLastKeyCode() {
-        int retKeyCode = lastKeyCode;
-        lastKeyCode = KeyEvent.KEYCODE_UNKNOWN;
-        return retKeyCode;
+        if (lastKeyEvent != null) return lastKeyEvent.getKeyCode();
+        return 0;
+    }
+
+    public char getLastChar() {
+        if (lastKeyEvent != null) return lastKeyEvent.getDisplayLabel();
+        return '\0';
+    }
+
+    public int getLastUnicode() {
+        if (lastKeyEvent != null) return lastKeyEvent.getUnicodeChar();
+        return 0;
+    }
+
+    public void clearLastEvent() {
+        lastKeyEvent = null;
     }
 
     /* PRIVATE FOR JNI (raymob.h) */
 
     public void onKeyUpEvent(KeyEvent event) {
-        lastKeyCode = event.getKeyCode();
+        lastKeyEvent = event;
     }
 }

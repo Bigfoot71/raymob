@@ -58,7 +58,11 @@ RMBAPI float GetAccelerometerZ(void);
 RMBAPI void ShowSoftKeyboard(void);
 RMBAPI void HideSoftKeyboard(void);
 RMBAPI bool IsSoftKeyboardActive(void);
-RMBAPI int GetLastSoftKeyPressed(void);
+RMBAPI int GetLastSoftKeyCode(void);
+RMBAPI char GetLastSoftKeyChar(void);
+RMBAPI int GetLastSoftKeyUnicode(void);
+RMBAPI void ClearLastSoftKey(void);
+
 
 #if defined(__cplusplus)
 }
