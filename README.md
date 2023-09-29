@@ -29,21 +29,17 @@ This template can be customized to meet your specific needs. You can add depende
 
 ## Additional Information
 
-Within this project, you'll find a slightly modified version of raylib 4.5. One notable modification is the inclusion of a new function in raylib's API that allows you to retrieve the `struct android_app` from your native Android application. You can find detailed information about this function in the [documentation](https://developer.android.com/reference/games/game-activity/structandroid/app). Here's how you can use it:
+In this project, you will find a slightly modified version of raylib 4.5 that includes some bug fixes from raylib 4.6-dev and the addition of the `GetAndroidApp()` function from `rcore.c` into the API.
+
+This function allows you to obtain the `struct android_app`, which you can find the official documentation for [here](https://developer.android.com/reference/games/game-activity/structandroid/app).
 
 ```c
 RLAPI struct android_app *GetAndroidApp(void);
 ```
 
-Furthermore, a new header file has been added called `raymob.h` which can be used as a replacement for `raylib.h`. It introduces the following additional functions:
-
-```c
-RMBAPI JNIEnv* AttachCurrentThread(void);
-RMBAPI void DetachCurrentThread(void);
-RMBAPI jobject GetNativeLoaderInstance(void);
-```
-
-These new functions simplify the process of invoking both static and non-static public methods of your NativeLoader class from your C/C++ code. Additionally, they provide easy access to the `struct android_app` associated with your application.
+Furthermore, there is also the addition of a header file `raymob.h` that can be used as a replacement for `raylib.h` and adds new functionalities that can be enabled through `gradle.properties`.
+These include the **software keyboard**, **vibration**, and **accelerometer** of the device. You can check the header file [raymob.h](app/src/main/cpp/deps/raymob/raymob.h) if you need additional Android-related features that raylib does not support.
+These new functions also simplify the process of invoking both static and non-static public methods of your NativeLoader class from your C/C++ code.
 
 ## Useful Links
 
