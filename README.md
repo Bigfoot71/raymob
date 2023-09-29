@@ -44,7 +44,6 @@ These new functions also simplify the process of invoking both static and non-st
 ## Useful Links
 
 - [AdMob Integration in Raymob](https://gist.github.com/Bigfoot71/b3a658458ece93ddcb06f4c78f85076a): Gist demonstrating the integration of AdMob in Raymob.
-- [Using the vibration feature in Raymob](https://gist.github.com/Bigfoot71/2c89864354a9254ce555f2eca1961590): Gist explaining how to use the vibration of your device if possible.
 
 ## Contributions
 
