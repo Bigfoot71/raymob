@@ -25,8 +25,9 @@
 package com.raylib.raymob;  // Don't change the package name (see gradle.properties)
 
 import android.app.NativeActivity;
-import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
+import android.os.Bundle;
 
 public class NativeLoader extends NativeActivity {
 
@@ -65,6 +66,15 @@ public class NativeLoader extends NativeActivity {
     // Static method to get the instance of features (from C/C++)
     public Features getFeatures() {
         return features;
+    }
+
+    // Callback methods for managing the Android software keyboard
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if (features.softKeyboard != null) {
+            features.softKeyboard.onKeyUpEvent(event);
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
 }

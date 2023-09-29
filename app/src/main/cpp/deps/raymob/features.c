@@ -33,8 +33,8 @@ void Vibrate(float sec)
     if (featuresInstance != NULL)
     {
         JNIEnv* env = AttachCurrentThread();
-            jclass nativeLoaderClass = (*env)->GetObjectClass(env, featuresInstance);
-            jmethodID method = (*env)->GetMethodID(env, nativeLoaderClass, "vibrate", "(F)V");
+            jclass featuresClass = (*env)->GetObjectClass(env, featuresInstance);
+            jmethodID method = (*env)->GetMethodID(env, featuresClass, "vibrate", "(F)V");
             (*env)->CallVoidMethod(env, featuresInstance, method, (jfloat)sec);
         DetachCurrentThread();
     }
@@ -49,8 +49,8 @@ void StartAccelerometerListening(void)
     if (featuresInstance != NULL)
     {
         JNIEnv* env = AttachCurrentThread();
-            jclass nativeLoaderClass = (*env)->GetObjectClass(env, featuresInstance);
-            jmethodID method = (*env)->GetMethodID(env, nativeLoaderClass, "startAccelerometerListening", "()V");
+            jclass featuresClass = (*env)->GetObjectClass(env, featuresInstance);
+            jmethodID method = (*env)->GetMethodID(env, featuresClass, "startAccelerometerListening", "()V");
             (*env)->CallVoidMethod(env, featuresInstance, method);
         DetachCurrentThread();
     }
@@ -63,8 +63,8 @@ void StopAccelerometerListening(void)
     if (featuresInstance != NULL)
     {
         JNIEnv* env = AttachCurrentThread();
-            jclass nativeLoaderClass = (*env)->GetObjectClass(env, featuresInstance);
-            jmethodID method = (*env)->GetMethodID(env, nativeLoaderClass, "stopAccelerometerListening", "()V");
+            jclass featuresClass = (*env)->GetObjectClass(env, featuresInstance);
+            jmethodID method = (*env)->GetMethodID(env, featuresClass, "stopAccelerometerListening", "()V");
             (*env)->CallVoidMethod(env, featuresInstance, method);
         DetachCurrentThread();
     }
@@ -78,11 +78,11 @@ Vector3 GetAccelerometerAxis(void)
     {
         JNIEnv* env = AttachCurrentThread();
 
-            jclass nativeLoaderClass = (*env)->GetObjectClass(env, featuresInstance);
+            jclass featuresClass = (*env)->GetObjectClass(env, featuresInstance);
 
-            jmethodID methodX = (*env)->GetMethodID(env, nativeLoaderClass, "getAccelerometerX", "()F");
-            jmethodID methodY = (*env)->GetMethodID(env, nativeLoaderClass, "getAccelerometerY", "()F");
-            jmethodID methodZ = (*env)->GetMethodID(env, nativeLoaderClass, "getAccelerometerZ", "()F");
+            jmethodID methodX = (*env)->GetMethodID(env, featuresClass, "getAccelerometerX", "()F");
+            jmethodID methodY = (*env)->GetMethodID(env, featuresClass, "getAccelerometerY", "()F");
+            jmethodID methodZ = (*env)->GetMethodID(env, featuresClass, "getAccelerometerZ", "()F");
 
             Vector3 value = {
                 (*env)->CallFloatMethod(env, featuresInstance, methodX),
@@ -105,8 +105,8 @@ float GetAccelerometerX(void)
     if (featuresInstance != NULL)
     {
         JNIEnv* env = AttachCurrentThread();
-            jclass nativeLoaderClass = (*env)->GetObjectClass(env, featuresInstance);
-            jmethodID method = (*env)->GetMethodID(env, nativeLoaderClass, "getAccelerometerX", "()F");
+            jclass featuresClass = (*env)->GetObjectClass(env, featuresInstance);
+            jmethodID method = (*env)->GetMethodID(env, featuresClass, "getAccelerometerX", "()F");
             float value = (*env)->CallFloatMethod(env, featuresInstance, method);
         DetachCurrentThread();
 
@@ -123,8 +123,8 @@ float GetAccelerometerY(void)
     if (featuresInstance != NULL)
     {
         JNIEnv* env = AttachCurrentThread();
-            jclass nativeLoaderClass = (*env)->GetObjectClass(env, featuresInstance);
-            jmethodID method = (*env)->GetMethodID(env, nativeLoaderClass, "getAccelerometerY", "()F");
+            jclass featuresClass = (*env)->GetObjectClass(env, featuresInstance);
+            jmethodID method = (*env)->GetMethodID(env, featuresClass, "getAccelerometerY", "()F");
             float value = (*env)->CallFloatMethod(env, featuresInstance, method);
         DetachCurrentThread();
 
@@ -141,9 +141,75 @@ float GetAccelerometerZ(void)
     if (featuresInstance != NULL)
     {
         JNIEnv* env = AttachCurrentThread();
-            jclass nativeLoaderClass = (*env)->GetObjectClass(env, featuresInstance);
-            jmethodID method = (*env)->GetMethodID(env, nativeLoaderClass, "getAccelerometerZ", "()F");
+            jclass featuresClass = (*env)->GetObjectClass(env, featuresInstance);
+            jmethodID method = (*env)->GetMethodID(env, featuresClass, "getAccelerometerZ", "()F");
             float value = (*env)->CallFloatMethod(env, featuresInstance, method);
+        DetachCurrentThread();
+
+        return value;
+    }
+
+    return 0;
+}
+
+/* SOFT KEYBOARD */
+
+void ShowSoftKeyboard(void)
+{
+    jobject featuresInstance = GetFeaturesInstance();
+
+    if (featuresInstance != NULL)
+    {
+        JNIEnv* env = AttachCurrentThread();
+            jclass featuresClass = (*env)->GetObjectClass(env, featuresInstance);
+            jmethodID method = (*env)->GetMethodID(env, featuresClass, "showKeyboard", "()V");
+            (*env)->CallVoidMethod(env, featuresInstance, method);
+        DetachCurrentThread();
+    }
+}
+
+void HideSoftKeyboard(void)
+{
+    jobject featuresInstance = GetFeaturesInstance();
+
+    if (featuresInstance != NULL)
+    {
+        JNIEnv* env = AttachCurrentThread();
+            jclass featuresClass = (*env)->GetObjectClass(env, featuresInstance);
+            jmethodID method = (*env)->GetMethodID(env, featuresClass, "hideKeyboard", "()V");
+            (*env)->CallVoidMethod(env, featuresInstance, method);
+        DetachCurrentThread();
+    }
+}
+
+bool IsSoftKeyboardActive(void)
+{
+    jobject featuresInstance = GetFeaturesInstance();
+
+    if (featuresInstance != NULL)
+    {
+        JNIEnv* env = AttachCurrentThread();
+            jclass featuresClass = (*env)->GetObjectClass(env, featuresInstance);
+            jmethodID method = (*env)->GetMethodID(env, featuresClass, "isKeyboardActive", "()Z");
+            bool value = (*env)->CallBooleanMethod(env, featuresInstance, method);
+        DetachCurrentThread();
+
+        return value;
+    }
+
+    return false;
+}
+
+int GetLastSoftKeyPressed(void)
+{
+    jobject featuresInstance = GetFeaturesInstance();
+
+    if (featuresInstance != NULL)
+    {
+        JNIEnv* env = AttachCurrentThread();
+            jclass featuresClass = (*env)->GetObjectClass(env, featuresInstance);
+            jmethodID method = (*env)->GetMethodID(env, featuresClass, "getLastKeyCode", "()I");
+            int value = (*env)->CallIntMethod(env, featuresInstance, method);
         DetachCurrentThread();
 
         return value;

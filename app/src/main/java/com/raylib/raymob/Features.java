@@ -30,15 +30,18 @@ package com.raylib.raymob;
 import android.content.Context;
 import com.raylib.features.Vibration;
 import com.raylib.features.Accelerometer;
+import com.raylib.features.SoftKeyboard;
 
 public class Features {
 
-    private final Vibration vibrator;
-    private final Accelerometer accelerometer;
+    public final Vibration vibrator;
+    public final Accelerometer accelerometer;
+    public final SoftKeyboard softKeyboard;
 
     public Features(Context context) {
         vibrator = BuildConfig.FEATURE_VIBRATION ? new Vibration(context) : null;
         accelerometer = BuildConfig.FEATURE_ACCELEROMETER ? new Accelerometer(context) : null;
+        softKeyboard = BuildConfig.FEATURE_SOFT_KEYBOARD ? new SoftKeyboard(context) : null;
     }
 
     /* VIBRATION */
@@ -72,5 +75,24 @@ public class Features {
         return 0;
     }
 
+    /* SOFT KEYBOARD */
+
+    public void showKeyboard() {
+        if (softKeyboard != null) softKeyboard.showKeyboard();
+    }
+
+    public void hideKeyboard() {
+        if (softKeyboard != null) softKeyboard.hideKeyboard();
+    }
+
+    public boolean isKeyboardActive() {
+        if (softKeyboard != null) return softKeyboard.isActive();
+        return false;
+    }
+
+    public int getLastKeyCode() {
+        if (softKeyboard != null) return softKeyboard.getLastKeyCode();
+        return 0;
+    }
 
 }

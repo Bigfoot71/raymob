@@ -26,6 +26,7 @@ android {
         // Generates a build configuration based on the requested features in gradle.properties
         buildConfigField("boolean", "FEATURE_VIBRATION", project.properties['features.vibration'] ?: "false")
         buildConfigField("boolean", "FEATURE_ACCELEROMETER", project.properties['features.accelerometer'] ?: "false")
+        buildConfigField("boolean", "FEATURE_SOFT_KEYBOARD", project.properties['features.soft_keyboard'] ?: "false")
 
         // Substitution variables for the manifest
         manifestPlaceholders = [
@@ -59,6 +60,9 @@ android {
                     }
                     if (!project.properties['features.accelerometer']) {
                         delete(fileTree(dir: variant.mergeResources.outputDir, includes: ['**/Accelerometer*.class']))
+                    }
+                    if (!project.properties['features.soft_keyboard']) {
+                        delete(fileTree(dir: variant.mergeResources.outputDir, includes: ['**/SoftKeyboard*.class']))
                     }
                 }
             }
