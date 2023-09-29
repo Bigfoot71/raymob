@@ -59,10 +59,11 @@ RMBAPI void ShowSoftKeyboard(void);
 RMBAPI void HideSoftKeyboard(void);
 RMBAPI bool IsSoftKeyboardActive(void);
 RMBAPI int GetLastSoftKeyCode(void);
-RMBAPI char GetLastSoftKeyChar(void);
+RMBAPI unsigned short GetLastSoftKeyLabel(void);
 RMBAPI int GetLastSoftKeyUnicode(void);
+RMBAPI char GetLastSoftKeyChar(void);
 RMBAPI void ClearLastSoftKey(void);
-
+RMBAPI void SoftKeyboardEditText(char* text, unsigned int size);
 
 #if defined(__cplusplus)
 }

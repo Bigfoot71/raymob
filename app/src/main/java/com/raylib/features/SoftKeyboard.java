@@ -59,12 +59,12 @@ public class SoftKeyboard {
         return 0;
     }
 
-    public char getLastChar() {
+    public char getLastKeyLabel() {
         if (lastKeyEvent != null) return lastKeyEvent.getDisplayLabel();
         return '\0';
     }
 
-    public int getLastUnicode() {
+    public int getLastKeyUnicode() {
         if (lastKeyEvent != null) return lastKeyEvent.getUnicodeChar();
         return 0;
     }

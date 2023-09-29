@@ -23,6 +23,7 @@
  */
 
 #include "raymob.h"
+#include <string.h> // Used for 'SoftKeyboardEditText()'
 
 /* VIBRATION */
 
@@ -218,22 +219,22 @@ int GetLastSoftKeyCode(void)
     return 0;
 }
 
-char GetLastSoftKeyChar(void)
+unsigned short GetLastSoftKeyLabel(void)
 {
     jobject featuresInstance = GetFeaturesInstance();
 
     if (featuresInstance != NULL)
     {
         JNIEnv* env = AttachCurrentThread();
-                jclass featuresClass = (*env)->GetObjectClass(env, featuresInstance);
-                jmethodID method = (*env)->GetMethodID(env, featuresClass, "getLastKeyChar", "()C");
-                char value = (char)((*env)->CallCharMethod(env, featuresInstance, method));             // NOTE: Convert a jchar (unsidned short) to C-char (?)
+            jclass featuresClass = (*env)->GetObjectClass(env, featuresInstance);
+            jmethodID method = (*env)->GetMethodID(env, featuresClass, "getLastKeyLabel", "()C");
+            unsigned short value = (*env)->CallCharMethod(env, featuresInstance, method);
         DetachCurrentThread();
 
         return value;
     }
 
-    return '\0';
+    return 0;
 }
 
 int GetLastSoftKeyUnicode(void)
@@ -254,6 +255,52 @@ int GetLastSoftKeyUnicode(void)
     return 0;
 }
 
+char GetLastSoftKeyChar(void)
+{
+#   define KEYCODE_ENTER    66
+#   define KEYCODE_DEL      67
+
+    jobject featuresInstance = GetFeaturesInstance();
+
+    if (featuresInstance != NULL)
+    {
+        char value = '\0';
+
+        JNIEnv* env = AttachCurrentThread();
+        jclass featuresClass = (*env)->GetObjectClass(env, featuresInstance);
+
+        jmethodID methodKeyCode = (*env)->GetMethodID(env, featuresClass, "getLastKeyCode", "()I");
+        int keyCode = (*env)->CallIntMethod(env, featuresInstance, methodKeyCode);
+
+        if (keyCode != 0)
+        {
+            switch (keyCode)
+            {
+                case KEYCODE_ENTER: {
+                    value = '\n';
+                } break;
+
+                case KEYCODE_DEL: {
+                    value = '\b';
+                } break;
+
+                default: {
+                    jmethodID methodKeyUnicode = (*env)->GetMethodID(env, featuresClass, "getLastKeyUnicode", "()I");
+                    int u = (*env)->CallIntMethod(env, featuresInstance, methodKeyUnicode);
+                    if (u > 0xFF) value = '?';
+                    else value = (char) u;
+                }
+            }
+        }
+
+        DetachCurrentThread();
+
+        return value;
+    }
+
+    return '\0';
+}
+
 void ClearLastSoftKey(void)
 {
     jobject featuresInstance = GetFeaturesInstance();
@@ -266,4 +313,24 @@ void ClearLastSoftKey(void)
             (*env)->CallVoidMethod(env, featuresInstance, method);
         DetachCurrentThread();
     }
+}
+
+void SoftKeyboardEditText(char* text, unsigned int size)
+{
+    char c = GetLastSoftKeyChar();
+    if (c == '\0') return;
+
+    unsigned int len = strlen(text);
+
+    if (c == '\b' && len > 0)
+    {
+        text[len-1] = '\0';
+    }
+    else if (c != '\b' && len < size)
+    {
+        text[len++] = c;
+        text[len] = '\0';
+    }
+
+    ClearLastSoftKey();
 }

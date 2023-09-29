@@ -95,13 +95,13 @@ public class Features {
         return 0;
     }
 
-    public char getLastKeyChar() {
-        if (softKeyboard != null) return softKeyboard.getLastChar();
-        return '\0';
+    public char getLastKeyLabel() {
+        if (softKeyboard != null) return softKeyboard.getLastKeyLabel();
+        return 0;
     }
 
     public int getLastKeyUnicode() {
-        if (softKeyboard != null) return softKeyboard.getLastUnicode();
+        if (softKeyboard != null) return softKeyboard.getLastKeyUnicode();
         return 0;
     }
 
