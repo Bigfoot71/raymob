@@ -2,10 +2,21 @@ plugins {
     id 'com.android.application'
 }
 
+// Updates a file during compilation
+// Used to replace instances of 'com.raylib.raymob'
 def updateFile(filePath, toReplace, replacement) {
     def file = file(filePath)
     def modifiedContent = file.text.replaceAll(toReplace, replacement)
     file.write(modifiedContent)
+}
+
+// Checks if one or more values in a set
+// of properties in gradle.properties are true
+def isAtLeastOnePropertyTrueForPrefix(String prefix) {
+    def properties = project.properties
+    return properties.any { key, value ->
+        key.startsWith(prefix) && value == 'true'
+    }
 }
 
 android {
@@ -27,6 +38,14 @@ android {
         buildConfigField("boolean", "FEATURE_VIBRATION", project.properties['features.vibration'] ?: "false")
         buildConfigField("boolean", "FEATURE_ACCELEROMETER", project.properties['features.accelerometer'] ?: "false")
         buildConfigField("boolean", "FEATURE_SOFT_KEYBOARD", project.properties['features.soft_keyboard'] ?: "false")
+        buildConfigField("boolean", "FEATURE_DISPLAY_KEEP_ON", project.properties['features.display.keep_on'] ?: "false")
+        buildConfigField("boolean", "FEATURE_DISPLAY_IMMERSIVE", project.properties['features.display.immersive'] ?: "false")
+        buildConfigField("boolean", "FEATURE_DISPLAY_INTO_CUTOUT", project.properties['features.display.into_cutout'] ?: "false")
+
+        // Detects if at least one of the display features is requested
+        // displayProperties is later reused to determine class exclusion
+        def displayProperties = isAtLeastOnePropertyTrueForPrefix('features.display.')
+        buildConfigField("boolean", "FEATURE_DISPLAY", displayProperties.toString())
 
         // Substitution variables for the manifest
         manifestPlaceholders = [
@@ -63,6 +82,9 @@ android {
                     }
                     if (!project.properties['features.soft_keyboard']) {
                         delete(fileTree(dir: variant.mergeResources.outputDir, includes: ['**/SoftKeyboard*.class']))
+                    }
+                    if (!displayProperties) {
+                        delete(fileTree(dir: variant.mergeResources.outputDir, includes: ['**/Display*.class']))
                     }
                 }
             }

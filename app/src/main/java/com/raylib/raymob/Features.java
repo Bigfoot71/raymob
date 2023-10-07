@@ -31,82 +31,129 @@ import android.content.Context;
 import com.raylib.features.Vibration;
 import com.raylib.features.Accelerometer;
 import com.raylib.features.SoftKeyboard;
+import com.raylib.features.DisplayManager;
 
 public class Features {
+
+    /* FEATURES INSTANCES */
 
     public final Vibration vibrator;
     public final Accelerometer accelerometer;
     public final SoftKeyboard softKeyboard;
+    public final DisplayManager display;
+
+    /* CONSTRUCTOR */
 
     public Features(Context context) {
         vibrator = BuildConfig.FEATURE_VIBRATION ? new Vibration(context) : null;
         accelerometer = BuildConfig.FEATURE_ACCELEROMETER ? new Accelerometer(context) : null;
         softKeyboard = BuildConfig.FEATURE_SOFT_KEYBOARD ? new SoftKeyboard(context) : null;
+        display = (BuildConfig.FEATURE_DISPLAY) ? new DisplayManager(context) : null;
     }
 
     /* VIBRATION */
 
     public void vibrate(float seconds) {
-        if (vibrator != null) vibrator.vibrate(seconds);
+        if (vibrator != null) {
+            vibrator.vibrate(seconds);
+        }
     }
 
     /* ACCELEROMETER */
 
     public void startAccelerometerListening() {
-        if (accelerometer != null) accelerometer.startListening();
+        if (accelerometer != null) {
+            accelerometer.startListening();
+        }
     }
 
     public void stopAccelerometerListening() {
-        if (accelerometer != null) accelerometer.stopListening();
+        if (accelerometer != null) {
+            accelerometer.stopListening();
+        }
     }
 
     public float getAccelerometerX() {
-        if (accelerometer != null) return accelerometer.getX();
+        if (accelerometer != null) {
+            return accelerometer.getX();
+        }
         return 0;
     }
 
     public float getAccelerometerY() {
-        if (accelerometer != null) return accelerometer.getY();
+        if (accelerometer != null) {
+            return accelerometer.getY();
+        }
         return 0;
     }
 
     public float getAccelerometerZ() {
-        if (accelerometer != null) return accelerometer.getZ();
+        if (accelerometer != null) {
+            return accelerometer.getZ();
+        }
         return 0;
     }
 
     /* SOFT KEYBOARD */
 
     public void showKeyboard() {
-        if (softKeyboard != null) softKeyboard.showKeyboard();
+        if (softKeyboard != null) {
+            softKeyboard.showKeyboard();
+        }
     }
 
     public void hideKeyboard() {
-        if (softKeyboard != null) softKeyboard.hideKeyboard();
+        if (softKeyboard != null) {
+            softKeyboard.hideKeyboard();
+        }
     }
 
     public boolean isKeyboardActive() {
-        if (softKeyboard != null) return softKeyboard.isActive();
+        if (softKeyboard != null) {
+            return softKeyboard.isActive();
+        }
         return false;
     }
 
     public int getLastKeyCode() {
-        if (softKeyboard != null) return softKeyboard.getLastKeyCode();
+        if (softKeyboard != null) {
+            return softKeyboard.getLastKeyCode();
+        }
         return 0;
     }
 
     public char getLastKeyLabel() {
-        if (softKeyboard != null) return softKeyboard.getLastKeyLabel();
+        if (softKeyboard != null) {
+            return softKeyboard.getLastKeyLabel();
+        }
         return 0;
     }
 
     public int getLastKeyUnicode() {
-        if (softKeyboard != null) return softKeyboard.getLastKeyUnicode();
+        if (softKeyboard != null) {
+            return softKeyboard.getLastKeyUnicode();
+        }
         return 0;
     }
 
     public void clearLastKeyEvent() {
-        if (softKeyboard != null) softKeyboard.clearLastEvent();
+        if (softKeyboard != null) {
+            softKeyboard.clearLastEvent();
+        }
+    }
+
+    /* DISPLAY MANAGER */
+
+    public void keepScreenOn(boolean keepOn) {
+        if (display != null) {
+            display.keepScreenOn(keepOn);
+        }
+    }
+
+    public void setImmersiveMode() {
+        if (display != null) {
+            display.setImmersiveMode();
+        }
     }
 
 }

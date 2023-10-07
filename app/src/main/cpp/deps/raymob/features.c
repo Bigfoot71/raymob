@@ -334,3 +334,19 @@ void SoftKeyboardEditText(char* text, unsigned int size)
 
     ClearLastSoftKey();
 }
+
+/* DISPLAY MANAGER */
+
+void KeepScreenOn(bool keepOn)
+{
+    jobject featuresInstance = GetFeaturesInstance();
+
+    if (featuresInstance != NULL)
+    {
+        JNIEnv* env = AttachCurrentThread();
+        jclass featuresClass = (*env)->GetObjectClass(env, featuresInstance);
+        jmethodID method = (*env)->GetMethodID(env, featuresClass, "keepScreenOn", "(Z)V");
+        (*env)->CallVoidMethod(env, featuresInstance, method, (jboolean)keepOn);
+        DetachCurrentThread();
+    }
+}

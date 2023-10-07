@@ -65,6 +65,8 @@ RMBAPI char GetLastSoftKeyChar(void);
 RMBAPI void ClearLastSoftKey(void);
 RMBAPI void SoftKeyboardEditText(char* text, unsigned int size);
 
+RMBAPI void KeepScreenOn(bool keepOn);
+
 #if defined(__cplusplus)
 }
 #endif

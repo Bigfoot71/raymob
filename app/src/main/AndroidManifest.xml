@@ -25,7 +25,6 @@
         tools:targetApi="31">
         <activity
             android:name=".NativeLoader"
-            android:theme="@style/ActivityTheme"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="${APP_ORIENTATION}" android:launchMode="singleTask"
             android:resizeableActivity="false"
