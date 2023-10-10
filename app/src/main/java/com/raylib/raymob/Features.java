@@ -22,138 +22,99 @@
  *  SOFTWARE.
  */
 
-// TODO: Replaced method duplications with
-//  interfaces and null object pattern (?)
-
 package com.raylib.raymob;
 
 import android.content.Context;
-import com.raylib.features.Vibration;
-import com.raylib.features.Accelerometer;
-import com.raylib.features.SoftKeyboard;
-import com.raylib.features.DisplayManager;
+import com.raylib.features.*;
+import java.util.Optional;
 
 public class Features {
 
     /* FEATURES INSTANCES */
 
-    public final Vibration vibrator;
-    public final Accelerometer accelerometer;
-    public final SoftKeyboard softKeyboard;
-    public final DisplayManager display;
+    private final Optional<Vibration> vibrator;
+    private final Optional<Accelerometer> accelerometer;
+    private final Optional<SoftKeyboard> softKeyboard;
+    private final Optional<DisplayManager> display;
 
     /* CONSTRUCTOR */
 
     public Features(Context context) {
-        vibrator = BuildConfig.FEATURE_VIBRATION ? new Vibration(context) : null;
-        accelerometer = BuildConfig.FEATURE_ACCELEROMETER ? new Accelerometer(context) : null;
-        softKeyboard = BuildConfig.FEATURE_SOFT_KEYBOARD ? new SoftKeyboard(context) : null;
-        display = (BuildConfig.FEATURE_DISPLAY) ? new DisplayManager(context) : null;
+        vibrator = BuildConfig.FEATURE_VIBRATION ? Optional.of(new Vibration(context)) : Optional.empty();
+        accelerometer = BuildConfig.FEATURE_ACCELEROMETER ? Optional.of(new Accelerometer(context)) : Optional.empty();
+        softKeyboard = BuildConfig.FEATURE_SOFT_KEYBOARD ? Optional.of(new SoftKeyboard(context)) : Optional.empty();
+        display = BuildConfig.FEATURE_DISPLAY ? Optional.of(new DisplayManager(context)) : Optional.empty();
     }
 
     /* VIBRATION */
 
     public void vibrate(float seconds) {
-        if (vibrator != null) {
-            vibrator.vibrate(seconds);
-        }
+        vibrator.ifPresent(v -> v.vibrate(seconds));
     }
 
     /* ACCELEROMETER */
 
     public void startAccelerometerListening() {
-        if (accelerometer != null) {
-            accelerometer.startListening();
-        }
+        accelerometer.ifPresent(Accelerometer::startListening);
     }
 
     public void stopAccelerometerListening() {
-        if (accelerometer != null) {
-            accelerometer.stopListening();
-        }
+        accelerometer.ifPresent(Accelerometer::stopListening);
     }
 
     public float getAccelerometerX() {
-        if (accelerometer != null) {
-            return accelerometer.getX();
-        }
-        return 0;
+        return accelerometer.map(Accelerometer::getX).orElse(0f);
     }
 
     public float getAccelerometerY() {
-        if (accelerometer != null) {
-            return accelerometer.getY();
-        }
-        return 0;
+        return accelerometer.map(Accelerometer::getY).orElse(0f);
     }
 
     public float getAccelerometerZ() {
-        if (accelerometer != null) {
-            return accelerometer.getZ();
-        }
-        return 0;
+        return accelerometer.map(Accelerometer::getZ).orElse(0f);
     }
 
     /* SOFT KEYBOARD */
 
     public void showKeyboard() {
-        if (softKeyboard != null) {
-            softKeyboard.showKeyboard();
-        }
+        softKeyboard.ifPresent(SoftKeyboard::showKeyboard);
     }
 
     public void hideKeyboard() {
-        if (softKeyboard != null) {
-            softKeyboard.hideKeyboard();
-        }
+        softKeyboard.ifPresent(SoftKeyboard::hideKeyboard);
     }
 
     public boolean isKeyboardActive() {
-        if (softKeyboard != null) {
-            return softKeyboard.isActive();
-        }
-        return false;
+        return softKeyboard.map(SoftKeyboard::isActive).orElse(false);
     }
 
     public int getLastKeyCode() {
-        if (softKeyboard != null) {
-            return softKeyboard.getLastKeyCode();
-        }
-        return 0;
+        return softKeyboard.map(SoftKeyboard::getLastKeyCode).orElse(0);
     }
 
     public char getLastKeyLabel() {
-        if (softKeyboard != null) {
-            return softKeyboard.getLastKeyLabel();
-        }
-        return 0;
+        return softKeyboard.map(SoftKeyboard::getLastKeyLabel).orElse('\0');
     }
 
     public int getLastKeyUnicode() {
-        if (softKeyboard != null) {
-            return softKeyboard.getLastKeyUnicode();
-        }
-        return 0;
+        return softKeyboard.map(SoftKeyboard::getLastKeyUnicode).orElse(0);
     }
 
     public void clearLastKeyEvent() {
-        if (softKeyboard != null) {
-            softKeyboard.clearLastEvent();
-        }
+        softKeyboard.ifPresent(SoftKeyboard::clearLastEvent);
+    }
+
+    public void onKeyUpEvent(android.view.KeyEvent keyEvent) {
+        softKeyboard.ifPresent(sk -> sk.onKeyUpEvent(keyEvent));
     }
 
     /* DISPLAY MANAGER */
 
     public void keepScreenOn(boolean keepOn) {
-        if (display != null) {
-            display.keepScreenOn(keepOn);
-        }
+        display.ifPresent(d -> d.keepScreenOn(keepOn));
     }
 
     public void setImmersiveMode() {
-        if (display != null) {
-            display.setImmersiveMode();
-        }
+        display.ifPresent(DisplayManager::setImmersiveMode);
     }
-
 }

@@ -52,9 +52,7 @@ public class NativeLoader extends NativeActivity {
     // Callback methods for managing the Android software keyboard
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
-        if (features.softKeyboard != null) {
-            features.softKeyboard.onKeyUpEvent(event);
-        }
+        features.onKeyUpEvent(event);
         return super.onKeyDown(keyCode, event);
     }
 
