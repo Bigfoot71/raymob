@@ -64,31 +64,11 @@ android {
         }
 
         applicationVariants.all { variant ->
-
             // Change output names to the correct ones
             variant.outputs.all {
                 outputFileName = outputFileName.replace("com.raylib.raymob", project.properties['app.application_id'])
                 outputFileName = outputFileName.replace("raymob", project.properties['app.native_library_name'])
             }
-
-            // Deletion of unused feature class files from the output directory
-            variant.mergeResourcesProvider.configure {
-                doLast {
-                    if (!project.properties['features.vibration']) {
-                        delete(fileTree(dir: variant.mergeResources.outputDir, includes: ['**/Vibration*.class']))
-                    }
-                    if (!project.properties['features.accelerometer']) {
-                        delete(fileTree(dir: variant.mergeResources.outputDir, includes: ['**/Accelerometer*.class']))
-                    }
-                    if (!project.properties['features.soft_keyboard']) {
-                        delete(fileTree(dir: variant.mergeResources.outputDir, includes: ['**/SoftKeyboard*.class']))
-                    }
-                    if (!displayProperties) {
-                        delete(fileTree(dir: variant.mergeResources.outputDir, includes: ['**/Display*.class']))
-                    }
-                }
-            }
-
         }
 
     }

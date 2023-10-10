@@ -24,3 +24,8 @@
 -keep class com.raylib.raymob.NativeLoader {
     public <methods>;
 }
+
+# Keep the Features class and its methods to call them from the native application.
+-keep class com.raylib.raymob.Features {
+    public <methods>;
+}
