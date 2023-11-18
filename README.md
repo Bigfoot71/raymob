@@ -1,6 +1,6 @@
 <img src="app/src/main/ic_launcher-playstore.png" alt="raymob icon" width="256" height="256">
 
-# Raymob [![Targeting raylib 4.5](https://img.shields.io/badge/raylib-4.5-3DDC84)](https://raylib.com) [![Supported Platforms](https://img.shields.io/badge/Platform-Android-3DDC84)](https://developer.android.com/) [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) [![License](https://img.shields.io/badge/license-zlib%2Flibpng-blue.svg)](LICENSE)
+# Raymob [![Targeting raylib 5.0](https://img.shields.io/badge/raylib-5.0-3DDC84)](https://raylib.com) [![Supported Platforms](https://img.shields.io/badge/Platform-Android-3DDC84)](https://developer.android.com/) [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) [![License](https://img.shields.io/badge/license-zlib%2Flibpng-blue.svg)](LICENSE)
 
 Raymob is a simple implementation of [raylib](https://www.raylib.com/) for Android.
 
@@ -29,7 +29,7 @@ This template can be customized to meet your specific needs. You can add depende
 
 ## Additional Information
 
-In this project, you will find a slightly modified version of raylib 4.5 that includes some bug fixes from raylib 4.6-dev and the addition of the `GetAndroidApp()` function from `rcore.c` into the API.
+In this project you will find a slightly modified version of raylib 5.0 which includes adding the `GetAndroidApp()` function from `rcore.c` into the API.
 
 This function allows you to obtain the `struct android_app`, which you can find the official documentation for [here](https://developer.android.com/reference/games/game-activity/structandroid/app).
 

@@ -36,7 +36,7 @@
 // QOA streaming data descriptor
 typedef struct {
     qoa_desc info;                  // QOA descriptor data
-    
+
     FILE *file;                     // QOA file to read, if NULL, using memory buffer -> file_data
     unsigned char *file_data;       // QOA file data on memory
     unsigned int file_data_size;    // QOA file data on memory size
@@ -62,7 +62,7 @@ typedef struct {
 extern "C" {            // Prevents name mangling of functions
 #endif
 
-qoaplay_desc *qoaplay_open(char *path);
+qoaplay_desc *qoaplay_open(const char *path);
 qoaplay_desc *qoaplay_open_memory(const unsigned char *data, int data_size);
 void qoaplay_close(qoaplay_desc *qoa_ctx);
 
@@ -83,7 +83,7 @@ int qoaplay_get_frame(qoaplay_desc *qoa_ctx);
 //----------------------------------------------------------------------------------
 
 // Open QOA file, keep FILE pointer to keep reading from file
-qoaplay_desc *qoaplay_open(char *path)
+qoaplay_desc *qoaplay_open(const char *path)
 {
     FILE *file = fopen(path, "rb");
     if (!file) return NULL;
@@ -107,7 +107,7 @@ qoaplay_desc *qoaplay_open(char *path)
     unsigned int sample_data_size = qoa.channels*QOA_FRAME_LEN*sizeof(short)*2;
     qoaplay_desc *qoa_ctx = QOA_MALLOC(sizeof(qoaplay_desc) + buffer_size + sample_data_size);
     memset(qoa_ctx, 0, sizeof(qoaplay_desc));
-    
+
     qoa_ctx->file = file;
     qoa_ctx->file_data = NULL;
     qoa_ctx->file_data_size = 0;
