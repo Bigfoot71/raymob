@@ -83,6 +83,9 @@ android {
         // Modify the package name in raymob/Features.java
         updateFile("src/main/java/com/raylib/raymob/Features.java", "package com.raylib.raymob;", "package " + project.properties['app.application_id'] + ";")
 
+        // Modify the package name in features/DisplayManager.java
+        updateFile("src/main/java/com/raylib/features/DisplayManager.java", "import com.raylib.raymob", "import " + project.properties['app.application_id'])
+
         // Modify the package name in proguard-rules.pro
         updateFile("proguard-rules.pro", "com.raylib.raymob", project.properties['app.application_id'])
 
@@ -100,6 +103,9 @@ android {
 
         // Restore the package name in raymob/Features.java
         updateFile("src/main/java/com/raylib/raymob/Features.java", "package " + project.properties['app.application_id'] + ";", "package com.raylib.raymob;")
+
+        // Restore the package name in features/DisplayManager.java
+        updateFile("src/main/java/com/raylib/features/DisplayManager.java", "import " + project.properties['app.application_id'], "import com.raylib.raymob")
 
         // Restore the package name in proguard-rules.pro
         updateFile("proguard-rules.pro", project.properties['app.application_id'], "com.raylib.raymob")
