@@ -20,7 +20,6 @@ target_compile_definitions(raylib PRIVATE
     GRAPHICS_API_OPENGL_ES2
     PLATFORM_ANDROID
     __ANDROID__
-    MAL_NO_OSS
     )
 
 # Add specific compilation options based on target Android architecture
