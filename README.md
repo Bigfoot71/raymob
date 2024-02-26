@@ -1,8 +1,8 @@
 <img src="app/src/main/ic_launcher-playstore.png" alt="raymob icon" width="256" height="256">
 
-# Raymob [![Targeting raylib 5.0](https://img.shields.io/badge/raylib-5.0-3DDC84)](https://raylib.com) [![Supported Platforms](https://img.shields.io/badge/Platform-Android-3DDC84)](https://developer.android.com/) [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) [![License](https://img.shields.io/badge/license-zlib%2Flibpng-blue.svg)](LICENSE)
+# raymob [![Targeting raylib 5.0](https://img.shields.io/badge/raylib-5.0-3DDC84)](https://raylib.com) [![Supported Platforms](https://img.shields.io/badge/Platform-Android-3DDC84)](https://developer.android.com/) [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) [![License](https://img.shields.io/badge/license-zlib%2Flibpng-blue.svg)](LICENSE)
 
-Raymob is a simple implementation of [raylib](https://www.raylib.com/) for Android.
+raymob is a simple implementation of [raylib](https://www.raylib.com/) for Android.
 
 ## Prerequisites
 
@@ -19,7 +19,7 @@ If you already have this version of SDK and NDK without having Android Studio, y
 
 ## Compatibility
 
-By default, the Raymob template targets APIs 24 to 33, which corresponds from Android 7.0 to Android 13 (_so 96.2% of devices according to [apilevels.com](https://apilevels.com/)_). You can also adapt it to target other API versions if necessary.
+By default, the raymob template targets APIs 24 to 33, which corresponds from Android 7.0 to Android 13 (_so 96.2% of devices according to [apilevels.com](https://apilevels.com/)_). You can also adapt it to target other API versions if necessary.
 
 This project is fully C/C++ compatible for the logical part with raylib and you can also customize the Java part to your wishes.
 
@@ -31,12 +31,12 @@ These new functions also simplify the process of calling static and non-static p
 
 ## Useful Links
 
-- [AdMob Integration in Raymob](https://gist.github.com/Bigfoot71/b3a658458ece93ddcb06f4c78f85076a): Gist demonstrating the integration of AdMob in Raymob.
+- [AdMob Integration in raymob](https://gist.github.com/Bigfoot71/b3a658458ece93ddcb06f4c78f85076a): Gist demonstrating the integration of AdMob in raymob.
 
 ## Contributions
 
-If you believe that your repositories or gists related to Raymob can be beneficial to others, please feel free to reach out to me or open a pull request to have them added here.
-I welcome contributions and collaborations to enhance the Raymob project and make it more valuable for the community.
+If you believe that your repositories or gists related to raymob can be beneficial to others, please feel free to reach out to me or open a pull request to have them added here.
+I welcome contributions and collaborations to enhance the raymob project and make it more valuable for the community.
 
 You can also contribute to the project by reporting issues, suggesting improvements, or helping to document the project. Your input is highly appreciated!
 
