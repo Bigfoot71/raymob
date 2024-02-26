@@ -23,23 +23,11 @@ By default, the Raymob template targets APIs 24 to 33, which corresponds from An
 
 This project is fully C/C++ compatible for the logical part with raylib and you can also customize the Java part to your wishes.
 
-## Customization
+## Additional Features
 
-This template can be customized to meet your specific needs. You can add dependencies to the project via Gradle or additional native libraries by adding them to the `app/libs` directory and making the necessary modifications in the `CMakeLists.txt` file.
-
-## Additional Information
-
-In this project you will find a slightly modified version of raylib 5.0 which includes adding the `GetAndroidApp()` function from `rcore.c` into the API.
-
-This function allows you to obtain the `struct android_app`, which you can find the official documentation for [here](https://developer.android.com/reference/games/game-activity/structandroid/app).
-
-```c
-RLAPI struct android_app *GetAndroidApp(void);
-```
-
-Furthermore, there is also the addition of a header file `raymob.h` that can be used as a replacement for `raylib.h` and adds new functionalities that can be enabled through `gradle.properties`.
+In this project you will find a header file `raymob.h` that can be used as a replacement for `raylib.h` and adds new functionalities that can be enabled through `gradle.properties`.
 These include the **software keyboard**, **vibration**, and **accelerometer** of the device. You can check the header file [raymob.h](app/src/main/cpp/deps/raymob/raymob.h) if you need additional Android-related features that raylib does not support.
-These new functions also simplify the process of invoking both static and non-static public methods of your NativeLoader class from your C/C++ code.
+These new functions also simplify the process of calling static and non-static public methods of your Java class `NativeLoader` from your C/C++ code.
 
 ## Useful Links
 
