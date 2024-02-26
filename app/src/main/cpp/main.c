@@ -17,7 +17,7 @@
 *
 ********************************************************************************************/
 
-#include "raylib.h"
+#include "raymob.h" // This header can replace 'raylib.h' and includes additional functions related to Android.
 
 //------------------------------------------------------------------------------------
 // Program main entry point

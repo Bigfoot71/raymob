@@ -89,7 +89,7 @@
 // Function specifiers in case library is build/used as a shared library (Windows)
 // NOTE: Microsoft specifiers to tell compiler that symbols are imported/exported from a .dll
 #if defined(_WIN32)
-    #if defined(BUILD_LIBTYPE_SHARED)
+#if defined(BUILD_LIBTYPE_SHARED)
         #if defined(__TINYC__)
             #define __declspec(x) __attribute__((x))
         #endif
@@ -100,51 +100,51 @@
 #endif
 
 #ifndef RLAPI
-    #define RLAPI       // Functions defined as 'extern' by default (implicit specifiers)
+#define RLAPI       // Functions defined as 'extern' by default (implicit specifiers)
 #endif
 
 //----------------------------------------------------------------------------------
 // Some basic Defines
 //----------------------------------------------------------------------------------
 #ifndef PI
-    #define PI 3.14159265358979323846f
+#define PI 3.14159265358979323846f
 #endif
 #ifndef DEG2RAD
-    #define DEG2RAD (PI/180.0f)
+#define DEG2RAD (PI/180.0f)
 #endif
 #ifndef RAD2DEG
-    #define RAD2DEG (180.0f/PI)
+#define RAD2DEG (180.0f/PI)
 #endif
 
 // Allow custom memory allocators
 // NOTE: Require recompiling raylib sources
 #ifndef RL_MALLOC
-    #define RL_MALLOC(sz)       malloc(sz)
+#define RL_MALLOC(sz)       malloc(sz)
 #endif
 #ifndef RL_CALLOC
-    #define RL_CALLOC(n,sz)     calloc(n,sz)
+#define RL_CALLOC(n,sz)     calloc(n,sz)
 #endif
 #ifndef RL_REALLOC
-    #define RL_REALLOC(ptr,sz)  realloc(ptr,sz)
+#define RL_REALLOC(ptr,sz)  realloc(ptr,sz)
 #endif
 #ifndef RL_FREE
-    #define RL_FREE(ptr)        free(ptr)
+#define RL_FREE(ptr)        free(ptr)
 #endif
 
 // NOTE: MSVC C++ compiler does not support compound literals (C99 feature)
 // Plain structures in C++ (without constructors) can be initialized with { }
 // This is called aggregate initialization (C++11 feature)
 #if defined(__cplusplus)
-    #define CLITERAL(type)      type
+#define CLITERAL(type)      type
 #else
-    #define CLITERAL(type)      (type)
+#define CLITERAL(type)      (type)
 #endif
 
 // Some compilers (mostly macos clang) default to C++98,
 // where aggregate initialization can't be used
 // So, give a more clear error stating how to fix this
 #if !defined(_MSC_VER) && (defined(__cplusplus) && __cplusplus < 201103L)
-    #error "C++11 or later is required. Add -std=c++11"
+#error "C++11 or later is required. Add -std=c++11"
 #endif
 
 // NOTE: We set some defines with some data types declared by raylib
@@ -194,9 +194,9 @@
 //----------------------------------------------------------------------------------
 // Boolean type
 #if (defined(__STDC__) && __STDC_VERSION__ >= 199901L) || (defined(_MSC_VER) && _MSC_VER >= 1800)
-    #include <stdbool.h>
+#include <stdbool.h>
 #elif !defined(__cplusplus) && !defined(bool)
-    typedef enum bool { false = 0, true = !false } bool;
+typedef enum bool { false = 0, true = !false } bool;
     #define RL_BOOL_TYPE
 #endif
 
@@ -948,12 +948,6 @@ typedef bool (*SaveFileTextCallback)(const char *fileName, char *text); // FileI
 
 #if defined(__cplusplus)
 extern "C" {            // Prevents name mangling of functions
-#endif
-
-// Android-related functions (raymob)
-#if defined(PLATFORM_ANDROID)
-#include "android_native_app_glue.h"
-struct android_app *GetAndroidApp(void);
 #endif
 
 // Window-related functions
