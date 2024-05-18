@@ -1,7 +1,7 @@
 /*
  *  raymob License (MIT)
  *
- *  Copyright (c) 2023 Le Juez Victor
+ *  Copyright (c) 2023-2024 Le Juez Victor
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
