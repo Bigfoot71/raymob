@@ -52,6 +52,10 @@ RMBAPI void DetachCurrentThread(void);                                  // Detac
 RMBAPI jobject GetNativeLoaderInstance(void);                           // Returns a pointer to the class that initiated the native activity.
 RMBAPI jobject GetFeaturesInstance(void);                               // Returns a pointer to the raymob features class.
 
+// WARNING: Return a string allocated on the heap.
+// The responsibility for releasing the channel lies with the user.
+RMBAPI char* GetCacheDir(void);                                         // Gets the cache directory path of the Android application.
+
 /* Feature functions */
 
 RMBAPI void Vibrate(float sec);                                         // Initiates device vibration for the specified duration in seconds.

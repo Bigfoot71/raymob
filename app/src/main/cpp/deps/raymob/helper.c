@@ -23,6 +23,8 @@
  */
 
 #include "raymob.h"
+#include <stdlib.h>
+#include <string.h>
 
 /* Static variables */
 
@@ -33,7 +35,7 @@ static jobject featuresInstance = NULL;
 JNIEnv* AttachCurrentThread(void)
 {
     JavaVM *vm = GetAndroidApp()->activity->vm;
-    JNIEnv *env;
+    JNIEnv *env = NULL;
 
     (*vm)->AttachCurrentThread(vm, &env, NULL);
     return env;
@@ -69,4 +71,61 @@ jobject GetFeaturesInstance(void)
     }
 
     return featuresInstance;
+}
+
+char* GetCacheDir(void)
+{
+    struct android_app *app = GetAndroidApp();
+
+    JavaVM* vm = app->activity->vm;
+    JNIEnv* env = NULL;
+    (*vm)->AttachCurrentThread(vm, &env, NULL);
+
+    // Get the activity object and its class
+    jobject activity = app->activity->clazz;
+    jclass activityClass = (*env)->GetObjectClass(env, activity);
+
+    // Get the method ID for the getCacheDir() method of the activity
+    jmethodID getCacheDirMethod = (*env)->GetMethodID(env, activityClass, "getCacheDir", "()Ljava/io/File;");
+
+    // Call the getCacheDir() method to get the cache directory
+    jobject cacheDir = (*env)->CallObjectMethod(env, activity, getCacheDirMethod);
+
+    // Get the class object for java.io.File
+    jclass fileClass = (*env)->GetObjectClass(env, cacheDir);
+
+    // Get the method ID for the getPath() method of java.io.File
+    jmethodID getPathMethod = (*env)->GetMethodID(env, fileClass, "getPath", "()Ljava/lang/String;");
+
+    // Call the getPath() method to get the path of the cache directory
+    jstring pathString = (jstring)(*env)->CallObjectMethod(env, cacheDir, getPathMethod);
+
+    // Get the UTF-8 encoded string from the Java string
+    const char *pathChars = (*env)->GetStringUTFChars(env, pathString, NULL);
+
+    // Allocate memory for the cache path
+    size_t len = strlen(pathChars) + 1; // NOTE: +1 for the null terminator
+    char* cachePath = malloc(len);
+
+    // Copy the string to the allocated memory
+    if (cachePath)
+    {
+        strncpy(cachePath, pathChars, len);
+        cachePath[len - 1] = '\0'; // NOTE: just for security
+    }
+
+    // Release the UTF-8 encoded string
+    (*env)->ReleaseStringUTFChars(env, pathString, pathChars);
+
+    // Clean up local references
+    (*env)->DeleteLocalRef(env, pathString);
+    (*env)->DeleteLocalRef(env, fileClass);
+    (*env)->DeleteLocalRef(env, cacheDir);
+    (*env)->DeleteLocalRef(env, activityClass);
+
+    // Detach the current thread from the JavaVM
+    (*vm)->DetachCurrentThread(vm);
+
+    // Return the cache path
+    return cachePath;
 }
