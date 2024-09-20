@@ -24,6 +24,7 @@
 
 #include "raymob.h"
 #include <string.h> // Used for 'SoftKeyboardEditText()'
+#include <stdlib.h> // Used for 'malloc' in 'getL10NString()'
 
 /* VIBRATION */
 
@@ -349,4 +350,46 @@ void KeepScreenOn(bool keepOn)
         (*env)->CallVoidMethod(env, featuresInstance, method, (jboolean)keepOn);
         DetachCurrentThread();
     }
+}
+
+/**
+ * Get localized string resource by name : <a href="https://en.wikipedia.org/wiki/Internationalization_and_localization">L10N</a>
+ * @param value string resource name
+ * @return localized string
+ */
+char* getL10NString(const char* value)
+{
+    jobject featuresInstance = GetFeaturesInstance();
+
+    if (featuresInstance != NULL)
+    {
+        JNIEnv* env = AttachCurrentThread();
+        jclass featuresClass = (*env)->GetObjectClass(env, featuresInstance);
+        jmethodID method = (*env)->GetMethodID(env, featuresClass, "getStringResourceByName", "(Ljava/lang/String;)Ljava/lang/String;");
+        jstring input = (*env)->NewStringUTF(env, value);
+        jstring rv = (*env)->CallObjectMethod(env, featuresInstance, method, input);
+        const char *strReturn = (*env)->GetStringUTFChars(env, rv, NULL);
+
+        // Allocate memory for the resource name
+        size_t len = strlen(strReturn) + 1; // NOTE: +1 for the null terminator
+        char* stringValue = malloc(len);
+        // Copy the string to the allocated memory
+        if (stringValue)
+        {
+            strncpy(stringValue, strReturn, len);
+            stringValue[len - 1] = '\0'; // NOTE: just for security
+        }
+
+        // Release the UTF-8 encoded string
+        (*env)->ReleaseStringUTFChars(env, rv, strReturn);
+
+        // Clean up local references
+        (*env)->DeleteLocalRef(env, rv);
+
+        DetachCurrentThread();
+
+        return stringValue;
+    }
+
+    return "";
 }

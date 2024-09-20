@@ -129,3 +129,66 @@ char* GetCacheDir(void)
     // Return the cache path
     return cachePath;
 }
+
+/**
+ * Read file used to read in cache directory, the readFile from Raylib is reserved to read in Assets folder
+ * @param fileName to read
+ * @return file content
+ */
+char* readFile(const char* fileName) {
+    char *text = NULL;
+    FILE * file = fopen(fileName, "rt");
+    if (file != NULL)
+    {
+        // WARNING: When reading a file as 'text' file,
+        // text mode causes carriage return-linefeed translation...
+        // ...but using fseek() should return correct byte-offset
+        fseek(file, 0, SEEK_END);
+        unsigned int size = (unsigned int)ftell(file);
+        fseek(file, 0, SEEK_SET);
+
+        if (size > 0)
+        {
+            text = (char *)RL_MALLOC((size + 1)*sizeof(char));
+
+            if (text != NULL)
+            {
+                unsigned int count = (unsigned int)fread(text, sizeof(char), size, file);
+
+                // WARNING: \r\n is converted to \n on reading, so,
+                // read bytes count gets reduced by the number of lines
+                if (count < size) text = RL_REALLOC(text, count + 1);
+
+                // Zero-terminate the string
+                text[count] = '\0';
+
+                TraceLog(LOG_INFO, "FILEIO: [%s] Text file loaded successfully", fileName);
+            }
+            else TraceLog(LOG_WARNING, "FILEIO: [%s] Failed to allocated memory for file reading", fileName);
+        }
+        else TraceLog(LOG_WARNING, "FILEIO: [%s] Failed to read text file", fileName);
+
+        fclose(file);
+    }
+    else TraceLog(LOG_WARNING, "FILEIO: File name provided is not valid");
+
+    return text;
+}
+
+/**
+ * Concat file name to cache directory path
+ * @param fileName
+ * @return fileName with cache path
+ */
+char* getFileWithCachePath(char* fileName) {
+    char *cacheDir = GetCacheDir();
+    size_t len1 = strlen(cacheDir);
+    size_t len2 = strlen(fileName);
+    size_t len = len1 + len2 + 1;
+    char *filePath = malloc(len);
+    strncpy(filePath, cacheDir, len1);
+    filePath[len1] = '/';
+    strncpy(filePath + len1 + 1, fileName, len2);
+    filePath[len] = '\0';
+    return filePath;
+}
