@@ -121,9 +121,4 @@ public class Features extends ContextWrapper {
     public void setImmersiveMode() {
         display.ifPresent(DisplayManager::setImmersiveMode);
     }
-
-    public String getStringResourceByName(String aString) {
-        @SuppressLint("DiscouragedApi") int resId = getResources().getIdentifier(aString, "string", getPackageName());
-        return getString(resId);
-    }
 }

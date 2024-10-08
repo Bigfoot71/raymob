@@ -131,13 +131,23 @@ char* GetCacheDir(void)
 }
 
 /**
- * Read file used to read in cache directory, the readFile from Raylib is reserved to read in Assets folder
+ * Read file from cache directory, the readFile from Raylib is reserved to read in Assets folder
  * @param fileName to read
  * @return file content
  */
-char* readFile(const char* fileName) {
+char* LoadCacheFile(const char* fileName) {
     char *text = NULL;
-    FILE * file = fopen(fileName, "rt");
+    char *cacheDir = GetCacheDir();
+    size_t len1 = strlen(cacheDir);
+    size_t len2 = strlen(fileName);
+    size_t len = len1 + len2 + 1;
+    char *filePath = malloc(len);
+    strncpy(filePath, cacheDir, len1);
+    filePath[len1] = '/';
+    strncpy(filePath + len1 + 1, fileName, len2);
+    filePath[len] = '\0';
+
+    FILE * file = fopen(filePath, "rt");
     if (file != NULL)
     {
         // WARNING: When reading a file as 'text' file,
@@ -176,19 +186,79 @@ char* readFile(const char* fileName) {
 }
 
 /**
- * Concat file name to cache directory path
- * @param fileName
- * @return fileName with cache path
+ * Get localized string resource by name : <a href="https://en.wikipedia.org/wiki/Internationalization_and_localization">L10N</a>
+ * @param value string resource name
+ * @return localized string
  */
-char* getFileWithCachePath(char* fileName) {
-    char *cacheDir = GetCacheDir();
-    size_t len1 = strlen(cacheDir);
-    size_t len2 = strlen(fileName);
-    size_t len = len1 + len2 + 1;
-    char *filePath = malloc(len);
-    strncpy(filePath, cacheDir, len1);
-    filePath[len1] = '/';
-    strncpy(filePath + len1 + 1, fileName, len2);
-    filePath[len] = '\0';
-    return filePath;
+char* GetL10NString(const char* value)
+{
+    jobject nativeInstance = GetNativeLoaderInstance();
+
+    if (nativeInstance != NULL)
+    {
+        JNIEnv* env = AttachCurrentThread();
+
+        // Get the native context class (nativeInstance)
+        jclass nativeClass = (*env)->GetObjectClass(env, nativeInstance);
+
+        // Get the native instance's getResources method
+        jmethodID getResourcesMethod = (*env)->GetMethodID(env, nativeClass, "getResources", "()Landroid/content/res/Resources;");
+        jobject resources = (*env)->CallObjectMethod(env, nativeInstance, getResourcesMethod);
+
+        // Get the getIdentifier method of the Resources class
+        jclass resourcesClass = (*env)->GetObjectClass(env, resources);
+        jmethodID getIdentifierMethod = (*env)->GetMethodID(env, resourcesClass, "getIdentifier",
+                                                            "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)I");
+
+        // Convert string name passed as parameter to jstring
+        jstring resourceName = (*env)->NewStringUTF(env, value);
+        jstring defType = (*env)->NewStringUTF(env, "string");
+
+        // Get the package name of the native instance
+        jmethodID getPackageNameMethod = (*env)->GetMethodID(env, nativeClass, "getPackageName", "()Ljava/lang/String;");
+        jstring packageName = (jstring)(*env)->CallObjectMethod(env, nativeInstance, getPackageNameMethod);
+
+        // Call getIdentifier to get the resource identifier
+        jint resId = (*env)->CallIntMethod(env, resources, getIdentifierMethod, resourceName, defType, packageName);
+
+        // Clean up used local references
+        (*env)->DeleteLocalRef(env, resourceName);
+        (*env)->DeleteLocalRef(env, defType);
+
+        if (resId == 0) {
+            // No identifier found for this resource
+            DetachCurrentThread();
+            return NULL;
+        }
+
+        // Call getString with the obtained identifier
+        jmethodID getStringMethod = (*env)->GetMethodID(env, nativeClass, "getString", "(I)Ljava/lang/String;");
+        jstring rv = (jstring)(*env)->CallObjectMethod(env, nativeInstance, getStringMethod, resId);
+
+        if (rv == NULL) {
+            DetachCurrentThread();
+            return NULL;
+        }
+
+        // Convert jstring to char*
+        const char* strReturn = (*env)->GetStringUTFChars(env, rv, NULL);
+
+        // Allocate memory for returned string
+        size_t len = strlen(strReturn) + 1;
+        char* stringValue = malloc(len);
+
+        if (stringValue) {
+            strncpy(stringValue, strReturn, len);
+            stringValue[len - 1] = '\0'; // Just for security: end with '\0'
+        }
+
+        // Free UTF string and clean local references
+        (*env)->ReleaseStringUTFChars(env, rv, strReturn);
+        (*env)->DeleteLocalRef(env, rv);
+
+        DetachCurrentThread();
+        return stringValue;
+    }
+
+    return NULL;
 }
