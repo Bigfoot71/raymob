@@ -24,7 +24,6 @@
 
 #include "raymob.h"
 #include <string.h> // Used for 'SoftKeyboardEditText()'
-#include <stdlib.h> // Used for 'malloc' in 'getL10NString()'
 
 /* VIBRATION */
 

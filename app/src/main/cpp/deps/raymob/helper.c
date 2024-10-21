@@ -130,12 +130,8 @@ char* GetCacheDir(void)
     return cachePath;
 }
 
-/**
- * Read file from cache directory, the readFile from Raylib is reserved to read in Assets folder
- * @param fileName to read
- * @return file content
- */
-char* LoadCacheFile(const char* fileName) {
+char* LoadCacheFile(const char* fileName)
+{
     char *text = NULL;
     char *cacheDir = GetCacheDir();
     size_t len1 = strlen(cacheDir);
@@ -185,11 +181,6 @@ char* LoadCacheFile(const char* fileName) {
     return text;
 }
 
-/**
- * Get localized string resource by name : <a href="https://en.wikipedia.org/wiki/Internationalization_and_localization">L10N</a>
- * @param value string resource name
- * @return localized string
- */
 char* GetL10NString(const char* value)
 {
     jobject nativeInstance = GetNativeLoaderInstance();

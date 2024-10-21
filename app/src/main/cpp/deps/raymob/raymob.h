@@ -87,6 +87,27 @@ RMBAPI jobject GetFeaturesInstance(void);
  */
 RMBAPI char* GetCacheDir(void);
 
+/**
+ * @brief Read file from cache directory, the readFile from raylib is reserved to read in Assets folder.
+ *
+ * @param fileName to read
+ * @return file content
+ */
+char* LoadCacheFile(const char* fileName);
+
+/**
+ * @brief Get localized string resource by name L10N.
+ *
+ * @see L10N: https://en.wikipedia.org/wiki/Internationalization_and_localization
+ *
+ * @warning This function returns a string allocated on the heap.
+ * The responsibility for releasing the memory lies with the user.
+ *
+ * @param value string resource name
+ * @return localized string
+ */
+char* GetL10NString(const char* value);
+
 /* Feature functions */
 
 /**

@@ -24,14 +24,11 @@
 
 package com.raylib.raymob;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.ContextWrapper;
-
 import com.raylib.features.*;
 import java.util.Optional;
 
-public class Features extends ContextWrapper {
+public class Features {
 
     /* FEATURES INSTANCES */
 
