@@ -40,7 +40,6 @@ public class Features {
     /* CONSTRUCTOR */
 
     public Features(Context context) {
-        super(context);
         vibrator = BuildConfig.FEATURE_VIBRATION ? Optional.of(new Vibration(context)) : Optional.empty();
         accelerometer = BuildConfig.FEATURE_ACCELEROMETER ? Optional.of(new Accelerometer(context)) : Optional.empty();
         softKeyboard = BuildConfig.FEATURE_SOFT_KEYBOARD ? Optional.of(new SoftKeyboard(context)) : Optional.empty();
