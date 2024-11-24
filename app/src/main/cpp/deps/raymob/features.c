@@ -183,7 +183,7 @@ Vector3 GetGyroscopeAxis(void)
     return (Vector3) {0};
 }
 
-float GetGyroscoperX(void)
+float GetGyroscopeX(void)
 {
     jobject featuresInstance = GetFeaturesInstance();
 
@@ -201,7 +201,7 @@ float GetGyroscoperX(void)
     return 0;
 }
 
-float GetGyroscoperY(void)
+float GetGyroscopeY(void)
 {
     jobject featuresInstance = GetFeaturesInstance();
 
@@ -219,7 +219,7 @@ float GetGyroscoperY(void)
     return 0;
 }
 
-float GetGyroscoperZ(void)
+float GetGyroscopeZ(void)
 {
     jobject featuresInstance = GetFeaturesInstance();
 
