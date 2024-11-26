@@ -25,27 +25,30 @@
 package com.raylib.features;
 
 import android.content.Context;
-import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorManager;
 
-public class Accelerometer implements android.hardware.SensorEventListener {
+public class Sensor implements android.hardware.SensorEventListener {
 
     private SensorManager sensorManager;
-    private Sensor accelerometer;
+    private android.hardware.Sensor accelerometer;
+    private android.hardware.Sensor gyroscope;
     private float[] accelerometerValues = new float[3]; // To store the axis values (x, y, z)
+    private float[] gyroscopeValues = new float[3]; // To store the axis values (x, y, z)
 
-    public Accelerometer(Context context) {
+    public Sensor(Context context) {
         sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         if (sensorManager != null) {
-            accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+            accelerometer = sensorManager.getDefaultSensor(android.hardware.Sensor.TYPE_ACCELEROMETER);
+            gyroscope = sensorManager.getDefaultSensor(android.hardware.Sensor.TYPE_GYROSCOPE);
         }
     }
 
     // Method to start listening to the accelerometer
     public void startListening() {
         if (accelerometer != null) {
-            sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+            sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_GAME);
+            sensorManager.registerListener(this, gyroscope, SensorManager.SENSOR_DELAY_GAME);
         }
     }
 
@@ -55,31 +58,50 @@ public class Accelerometer implements android.hardware.SensorEventListener {
     }
 
     // Method to get the value of the X-axis
-    public float getX() {
+    public float getAccelerometerX() {
         return accelerometerValues[0];
     }
 
     // Method to get the value of the Y-axis
-    public float getY() {
+    public float getAccelerometerY() {
         return accelerometerValues[1];
     }
 
     // Method to get the value of the Z-axis
-    public float getZ() {
+    public float getAccelerometerZ() {
         return accelerometerValues[2];
+    }
+
+    // Method to get the value of the X-axis
+    public float getGyroscopeX() {
+        return gyroscopeValues[0];
+    }
+
+    // Method to get the value of the Y-axis
+    public float getGyroscopeY() {
+        return gyroscopeValues[1];
+    }
+
+    // Method to get the value of the Z-axis
+    public float getGyroscopeZ() {
+        return gyroscopeValues[2];
     }
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+        if (event.sensor.getType() == android.hardware.Sensor.TYPE_ACCELEROMETER) {
             accelerometerValues[0] = event.values[0]; // X-axis
             accelerometerValues[1] = event.values[1]; // Y-axis
             accelerometerValues[2] = event.values[2]; // Z-axis
+        } else if (event.sensor.getType() == android.hardware.Sensor.TYPE_GYROSCOPE) {
+            gyroscopeValues[0] = event.values[0]; // X-axis
+            gyroscopeValues[1] = event.values[1]; // Y-axis
+            gyroscopeValues[2] = event.values[2]; // Z-axis
         }
     }
 
     @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+    public void onAccuracyChanged(android.hardware.Sensor sensor, int accuracy) {
         // Do nothing in case of sensor accuracy change
     }
 }

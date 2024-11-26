@@ -120,12 +120,12 @@ RMBAPI void Vibrate(float sec);
 /**
  * @brief Starts listening to accelerometer sensor data.
  */
-RMBAPI void StartAccelerometerListening(void);
+RMBAPI void StartSensorListening(void);
 
 /**
  * @brief Stops listening to accelerometer sensor data.
  */
-RMBAPI void StopAccelerometerListening(void);
+RMBAPI void StopSensorListening(void);
 
 /**
  * @brief Returns the current accelerometer axis vector.
@@ -154,6 +154,34 @@ RMBAPI float GetAccelerometerY(void);
  * @return Current value of the Z-axis accelerometer.
  */
 RMBAPI float GetAccelerometerZ(void);
+
+/**
+ * @brief Returns the current gyroscope axis vector.
+ *
+ * @return Current gyroscope axis vector.
+ */
+RMBAPI Vector3 GetGyroscopeAxis(void);
+
+/**
+ * @brief Returns the current value of the X-axis gyroscope.
+ *
+ * @return Current value of the X-axis gyroscope.
+ */
+RMBAPI float GetGyroscopeX(void);
+
+/**
+ * @brief Returns the current value of the Y-axis gyroscope.
+ *
+ * @return Current value of the Y-axis gyroscope.
+ */
+RMBAPI float GetGyroscopeY(void);
+
+/**
+ * @brief Returns the current value of the Z-axis gyroscope.
+ *
+ * @return Current value of the Z-axis gyroscope.
+ */
+RMBAPI float GetGyroscopeZ(void);
 
 /**
  * @brief Displays the soft keyboard on the screen.
