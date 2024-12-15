@@ -30,13 +30,15 @@ import android.os.Bundle;
 
 public class NativeLoader extends NativeActivity {
 
-    private Features features;
+    public DisplayManager displayManager;
+    public SoftKeyboard softKeyboard;
 
     // Loading method of your native application
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        features = new Features(this);  // Instantiates the class allowing access to specific Android features
+        displayManager = new DisplayManager(this);
+        softKeyboard = new SoftKeyboard(this);
         System.loadLibrary("raymob");   // Load your game library (don't change raymob, see gradle.properties)
     }
 
@@ -45,20 +47,15 @@ public class NativeLoader extends NativeActivity {
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         if (BuildConfig.FEATURE_DISPLAY_IMMERSIVE && hasFocus) {
-            features.setImmersiveMode(); // If the app has focus, re-enable immersive mode
+            displayManager.setImmersiveMode(); // If the app has focus, re-enable immersive mode
         }
     }
 
     // Callback methods for managing the Android software keyboard
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
-        features.onKeyUpEvent(event);
+        softKeyboard.onKeyUpEvent(event);
         return super.onKeyDown(keyCode, event);
-    }
-
-    // Static method to get the instance of features (from C/C++)
-    public Features getFeatures() {
-        return features;
     }
 
 }

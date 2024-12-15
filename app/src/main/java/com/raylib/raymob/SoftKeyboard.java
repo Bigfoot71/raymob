@@ -22,7 +22,7 @@
  *  SOFTWARE.
  */
 
-package com.raylib.features;
+package com.raylib.raymob;
 
 import android.view.inputmethod.InputMethodManager;
 import android.app.NativeActivity;
@@ -48,10 +48,6 @@ public class SoftKeyboard {
 
     public void hideKeyboard() {
         imm.hideSoftInputFromWindow(((NativeActivity)context).getWindow().getDecorView().getWindowToken(), 0);
-    }
-
-    public boolean isActive() {
-        return imm.isActive(((NativeActivity)context).getWindow().getDecorView());
     }
 
     public int getLastKeyCode() {

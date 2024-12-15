@@ -4,16 +4,19 @@
 
     <uses-feature android:glEsVersion="${GL_VERSION_CODE}" android:required="true" />
 
-    <!-- Conditionally include permission features -->
+    <!-- Indicates the requirements for this application -->
 
     <uses-permission android:name="android.permission.INTERNET"
-        android:required="${FEATURE_INTERNET}" />
+        android:required="${REQUIRE_INTERNET}" />
 
     <uses-permission android:name="android.permission.VIBRATE"
-        android:required="${FEATURE_VIBRATION}" />
+        android:required="${REQUIRE_VIBRATION}" />
+
+    <uses-feature android:name="android.hardware.sensor.gyroscope"
+        android:required="${REQUIRE_GYROSCOPE}" />
 
     <uses-feature android:name="android.hardware.sensor.accelerometer"
-        android:required="${FEATURE_ACCELEROMETER}" />
+        android:required="${REQUIRE_ACCELEROMETER}" />
 
     <!-- Application config -->
 

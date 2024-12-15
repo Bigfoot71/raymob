@@ -50,26 +50,19 @@ android {
         resValue "string", "app_name", project.properties['app.name']
 
         // Generates a build configuration based on the requested features in gradle.properties
-        buildConfigField("boolean", "FEATURE_VIBRATION", project.properties['features.vibration'] ?: "false")
-        buildConfigField("boolean", "FEATURE_ACCELEROMETER", project.properties['features.accelerometer'] ?: "false")
-        buildConfigField("boolean", "FEATURE_SOFT_KEYBOARD", project.properties['features.soft_keyboard'] ?: "false")
-        buildConfigField("boolean", "FEATURE_DISPLAY_KEEP_ON", project.properties['features.display.keep_on'] ?: "false")
-        buildConfigField("boolean", "FEATURE_DISPLAY_IMMERSIVE", project.properties['features.display.immersive'] ?: "false")
-        buildConfigField("boolean", "FEATURE_DISPLAY_INTO_CUTOUT", project.properties['features.display.into_cutout'] ?: "false")
-
-        // Detects if at least one of the display features is requested
-        // displayProperties is later reused to determine class exclusion
-        def displayProperties = isAtLeastOnePropertyTrueForPrefix('features.display.')
-        buildConfigField("boolean", "FEATURE_DISPLAY", displayProperties.toString())
+        buildConfigField("boolean", "FEATURE_DISPLAY_KEEP_ON", project.properties['display.keep_on'] ?: "false")
+        buildConfigField("boolean", "FEATURE_DISPLAY_IMMERSIVE", project.properties['display.immersive'] ?: "false")
+        buildConfigField("boolean", "FEATURE_DISPLAY_INTO_CUTOUT", project.properties['display.into_cutout'] ?: "false")
 
         // Substitution variables for the manifest
         manifestPlaceholders = [
             'GL_VERSION_CODE': getGLVersionCode(project.properties['gl.version']) ?: "0x00020000",
             'APP_LIB_NAME': project.properties['app.native_library_name'] ?: "raymob",
             'APP_ORIENTATION': project.properties['app.orientation'] ?: "landscape",
-            'FEATURE_INTERNET': project.properties['features.internet'] ?: "false",
-            'FEATURE_VIBRATION': project.properties['features.vibration'] ?: "false",
-            'FEATURE_ACCELEROMETER': project.properties['features.accelerometer'] ?: "false"
+            'REQUIRE_INTERNET': project.properties['requirements.internet'] ?: "false",
+            'REQUIRE_VIBRATION': project.properties['requirements.vibration'] ?: "false",
+            'REQUIRE_GYROSCOPE': project.properties['requirements.gyroscope'] ?: "false",
+            'REQUIRE_ACCELEROMETER': project.properties['requirements.accelerometer'] ?: "false"
         ]
 
         // Give to CMake the name of the library
@@ -99,17 +92,16 @@ android {
         updateFile("src/main/java/com/raylib/raymob/NativeLoader.java", "package com.raylib.raymob;", "package " + project.properties['app.application_id'] + ";")
         updateFile("src/main/java/com/raylib/raymob/NativeLoader.java", "System.loadLibrary\\(\"raymob\"\\);", "System.loadLibrary\\(\"" + project.properties['app.native_library_name'] + "\"\\);")
 
-        // Modify the package name in raymob/Features.java
-        updateFile("src/main/java/com/raylib/raymob/Features.java", "package com.raylib.raymob;", "package " + project.properties['app.application_id'] + ";")
-
-        // Modify the package name in features/DisplayManager.java
-        updateFile("src/main/java/com/raylib/features/DisplayManager.java", "import com.raylib.raymob", "import " + project.properties['app.application_id'])
+        // Modify the package name and library name in other java classes
+        updateFile("src/main/java/com/raylib/raymob/DisplayManager.java", "package com.raylib.raymob;", "package " + project.properties['app.application_id'] + ";")
+        updateFile("src/main/java/com/raylib/raymob/SoftKeyboard.java", "package com.raylib.raymob;", "package " + project.properties['app.application_id'] + ";")
 
         // Modify the package name in proguard-rules.pro
         updateFile("proguard-rules.pro", "com.raylib.raymob", project.properties['app.application_id'])
 
-        // Modify the library name in raymob/helper.c
-        updateFile("src/main/cpp/deps/raymob/helper.c", "com/raylib/raymob", project.properties['app.application_id'].replace(".", "/"))
+        // Modify the library name in raymob C source
+        updateFile("src/main/cpp/deps/raymob/display.c", "com/raylib/raymob", project.properties['app.application_id'].replace(".", "/"))
+        updateFile("src/main/cpp/deps/raymob/soft_keyboard.c", "com/raylib/raymob", project.properties['app.application_id'].replace(".", "/"))
 
     }
 
@@ -120,17 +112,16 @@ android {
         updateFile("src/main/java/com/raylib/raymob/NativeLoader.java", "package " + project.properties['app.application_id'] + ";", "package com.raylib.raymob;")
         updateFile("src/main/java/com/raylib/raymob/NativeLoader.java", "System.loadLibrary\\(\"" + project.properties['app.native_library_name'] + "\"\\);", "System.loadLibrary\\(\"raymob\"\\);")
 
-        // Restore the package name in raymob/Features.java
-        updateFile("src/main/java/com/raylib/raymob/Features.java", "package " + project.properties['app.application_id'] + ";", "package com.raylib.raymob;")
-
-        // Restore the package name in features/DisplayManager.java
-        updateFile("src/main/java/com/raylib/features/DisplayManager.java", "import " + project.properties['app.application_id'], "import com.raylib.raymob")
+        // Restore the package name and library name in other java classes
+        updateFile("src/main/java/com/raylib/raymob/DisplayManager.java", "package " + project.properties['app.application_id'] + ";", "package com.raylib.raymob;")
+        updateFile("src/main/java/com/raylib/raymob/SoftKeyboard.java", "package " + project.properties['app.application_id'] + ";", "package com.raylib.raymob;")
 
         // Restore the package name in proguard-rules.pro
         updateFile("proguard-rules.pro", project.properties['app.application_id'], "com.raylib.raymob")
 
-        // Restore the library name in raymob/helper.c
-        updateFile("src/main/cpp/deps/raymob/helper.c", project.properties['app.application_id'].replace(".", "/"), "com/raylib/raymob")
+        // Restore the library name in raymob C source
+        updateFile("src/main/cpp/deps/raymob/display.c", project.properties['app.application_id'].replace(".", "/"), "com/raylib/raymob")
+        updateFile("src/main/cpp/deps/raymob/soft_keyboard.c", project.properties['app.application_id'].replace(".", "/"), "com/raylib/raymob")
 
     }
 

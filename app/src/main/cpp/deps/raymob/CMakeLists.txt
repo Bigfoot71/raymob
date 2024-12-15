@@ -1,5 +1,5 @@
 # Define a library for raymoblib
-add_library(raymoblib STATIC helper.c features.c)
+add_library(raymoblib STATIC helper.c sensor.c vibrator.c display.c soft_keyboard.c)
 
 # Include headers directory for android_native_app_glue.c
 include_directories(${ANDROID_NDK}/sources/android/native_app_glue/)

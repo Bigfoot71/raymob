@@ -1,8 +1,7 @@
-package com.raylib.features;
+package com.raylib.raymob;
 
 import android.view.View;
 import android.app.NativeActivity;
-import com.raylib.raymob.BuildConfig;
 import android.view.WindowManager.LayoutParams;
 
 public class DisplayManager {
@@ -20,7 +19,6 @@ public class DisplayManager {
         if (BuildConfig.FEATURE_DISPLAY_INTO_CUTOUT) {
             renderIntoCutoutArea();
         }
-
     }
 
     public void keepScreenOn(boolean keepOn) {

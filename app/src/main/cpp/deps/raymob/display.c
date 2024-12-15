@@ -22,23 +22,25 @@
  *  SOFTWARE.
  */
 
-package com.raylib.features;
+#include "raymob.h"
 
-import android.content.Context;
-import android.os.Vibrator;
+void KeepScreenOn(bool keepOn)
+{
+    jobject nativeLoaderInst = GetNativeLoaderInstance();
 
-public class Vibration {
+    if (nativeLoaderInst != NULL) {
+        JNIEnv* env = AttachCurrentThread();
 
-    private final Vibrator vibrator;
+        jclass nativeLoaderClass = (*env)->GetObjectClass(env, nativeLoaderInst);
+        jfieldID displayManagerField = (*env)->GetFieldID(env, nativeLoaderClass, "displayManager", "Lcom/raylib/raymob/DisplayManager;");
+        jobject displayManager = (*env)->GetObjectField(env, nativeLoaderInst, displayManagerField);
 
-    public Vibration(Context context) {
-        vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-    }
-
-    public void vibrate(float seconds) {
-        if (vibrator != null && vibrator.hasVibrator()) {
-            vibrator.vibrate((long)(seconds * 1000));
+        if (displayManager != NULL) {
+            jclass displayManagerClass = (*env)->GetObjectClass(env, displayManager);
+            jmethodID method = (*env)->GetMethodID(env, displayManagerClass, "keepScreenOn", "(Z)V");
+            (*env)->CallVoidMethod(env, displayManager, method, (jboolean)keepOn);
         }
-    }
 
+        DetachCurrentThread();
+    }
 }
