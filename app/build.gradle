@@ -21,7 +21,7 @@ def isAtLeastOnePropertyTrueForPrefix(String prefix) {
 
 // Returns the hexadecimal code of the desired OpenGL version
 // Used to retrieve the code to write in the AndroidManifest.xml
-def getGLVersionCode(String version) {
+static def getGLVersionCode(String version) {
     def versionCodes = [
             'ES20': '0x00020000',
             'ES30': '0x00030000',
