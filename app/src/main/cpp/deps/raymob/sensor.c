@@ -30,8 +30,8 @@
 /* GLOBAL VARIABLES */
 
 struct SensorInputs {
-    Vector3 gyroscopeAxis;
     Vector3 accelerometerAxis;
+    Vector3 gyroscopeAxis;
 };
 
 static struct {
@@ -51,8 +51,8 @@ static const char* GetSensorName(Sensor sensor)
 {
     const char *sensorName = "UNKNOWN";
     switch (sensor) {
-        case SENSOR_GYROSCOPE: sensorName = "SENSOR_GYROSCOPE"; break;
         case SENSOR_ACCELEROMETER: sensorName = "SENSOR_ACCELEROMETER"; break;
+        case SENSOR_GYROSCOPE: sensorName = "SENSOR_GYROSCOPE"; break;
         default: break;
     }
     return sensorName;
@@ -63,15 +63,15 @@ static int SensorCallback(int fd, int events, void* data)
     ASensorEvent event;
     while (ASensorEventQueue_getEvents(State.eventQueue, &event, 1) > 0) {
         switch (event.type) {
-            case ASENSOR_TYPE_GYROSCOPE:
-                State.inputs.gyroscopeAxis.x = event.gyro.x;
-                State.inputs.gyroscopeAxis.y = event.gyro.y;
-                State.inputs.gyroscopeAxis.z = event.gyro.z;
-                break;
             case ASENSOR_TYPE_ACCELEROMETER:
                 State.inputs.accelerometerAxis.x = event.acceleration.x;
                 State.inputs.accelerometerAxis.y = event.acceleration.y;
                 State.inputs.accelerometerAxis.z = event.acceleration.z;
+                break;
+            case ASENSOR_TYPE_GYROSCOPE:
+                State.inputs.gyroscopeAxis.x = event.gyro.x;
+                State.inputs.gyroscopeAxis.y = event.gyro.y;
+                State.inputs.gyroscopeAxis.z = event.gyro.z;
                 break;
             default:
                 break;
@@ -97,11 +97,11 @@ void InitSensorManager(void)
         const char *name = ASensor_getName(sensorList[i]);
         bool supported = true;
         switch (ASensor_getType(sensorList[i])) {
-            case ASENSOR_TYPE_GYROSCOPE:
-                State.sensors[SENSOR_GYROSCOPE] = sensorList[i];
-                break;
             case ASENSOR_TYPE_ACCELEROMETER:
                 State.sensors[SENSOR_ACCELEROMETER] = sensorList[i];
+                break;
+            case ASENSOR_TYPE_GYROSCOPE:
+                State.sensors[SENSOR_GYROSCOPE] = sensorList[i];
                 break;
             default:
                 supported = false;
@@ -150,12 +150,12 @@ bool IsSensorAvailable(Sensor sensor)
     return State.sensors[sensor] != NULL;
 }
 
-Vector3 GetGyroscopeAxis(void)
-{
-    return State.inputs.gyroscopeAxis;
-}
-
 Vector3 GetAccelerotmerAxis(void)
 {
     return State.inputs.accelerometerAxis;
+}
+
+Vector3 GetGyroscopeAxis(void)
+{
+    return State.inputs.gyroscopeAxis;
 }

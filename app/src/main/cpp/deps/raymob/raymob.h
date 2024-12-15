@@ -32,8 +32,8 @@
 /* ENUMS */
 
 typedef enum {
-    SENSOR_GYROSCOPE        = 0,
-    SENSOR_ACCELEROMETER    = 1
+    SENSOR_ACCELEROMETER    = 0,
+    SENSOR_GYROSCOPE        = 1,
 } Sensor;
 
 #if defined(__cplusplus)
@@ -161,18 +161,18 @@ void EnableSensor(Sensor sensor);
 void DisableSensor(Sensor sensor);
 
 /**
- * @brief Retrieves the current gyroscope axis values.
- *
- * @return A Vector3 representing the gyroscope axis (x, y, z).
- */
-Vector3 GetGyroscopeAxis(void);
-
-/**
  * @brief Retrieves the current accelerometer axis values.
  *
  * @return A Vector3 representing the accelerometer axis (x, y, z).
  */
 Vector3 GetAccelerotmerAxis(void);
+
+/**
+ * @brief Retrieves the current gyroscope axis values.
+ *
+ * @return A Vector3 representing the gyroscope axis (x, y, z).
+ */
+Vector3 GetGyroscopeAxis(void);
 
 
 /* Soft Keyboard functions */
