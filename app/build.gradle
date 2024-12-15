@@ -59,6 +59,7 @@ android {
             'GL_VERSION_CODE': getGLVersionCode(project.properties['gl.version']) ?: "0x00020000",
             'APP_LIB_NAME': project.properties['app.native_library_name'] ?: "raymob",
             'APP_ORIENTATION': project.properties['app.orientation'] ?: "landscape",
+            'APP_CATEGORY': project.properties['app.category'] ?: "DEFAULT",
             'REQUIRE_INTERNET': project.properties['requirements.internet'] ?: "false",
             'REQUIRE_VIBRATION': project.properties['requirements.vibration'] ?: "false",
             'REQUIRE_GYROSCOPE': project.properties['requirements.gyroscope'] ?: "false",
