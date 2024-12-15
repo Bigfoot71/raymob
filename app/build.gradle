@@ -36,11 +36,11 @@ static def getGLVersionCode(String version) {
 
 android {
     namespace project.properties['app.application_id']
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         minSdk 24
-        targetSdk 33
+        targetSdk 34
 
         applicationId project.properties['app.application_id']
         versionCode Integer.parseInt(project.properties['app.version_code'])
