@@ -19,6 +19,21 @@ def isAtLeastOnePropertyTrueForPrefix(String prefix) {
     }
 }
 
+// Returns the hexadecimal code of the desired OpenGL version
+// Used to retrieve the code to write in the AndroidManifest.xml
+def getGLVersionCode(String version) {
+    def versionCodes = [
+            'ES20': '0x00020000',
+            'ES30': '0x00030000',
+            'ES31': '0x00030001',
+            'ES32': '0x00030002'
+    ]
+    if (!versionCodes.containsKey(version)) {
+        throw new IllegalArgumentException("Version '${version}' is not valid. Valid versions are: ${versionCodes.keySet()}")
+    }
+    return versionCodes[version]
+}
+
 android {
     namespace project.properties['app.application_id']
     compileSdk 33
@@ -49,17 +64,21 @@ android {
 
         // Substitution variables for the manifest
         manifestPlaceholders = [
-            'APP_LIB_NAME': project.properties['app.native_library_name'],
-            'APP_ORIENTATION': project.properties['app.orientation'],
-            'FEATURE_INTERNET': project.properties['features.internet'],
-            'FEATURE_VIBRATION': project.properties['features.vibration'],
-            'FEATURE_ACCELEROMETER': project.properties['features.accelerometer']
+            'GL_VERSION_CODE': getGLVersionCode(project.properties['gl.version']) ?: "0x00020000",
+            'APP_LIB_NAME': project.properties['app.native_library_name'] ?: "raymob",
+            'APP_ORIENTATION': project.properties['app.orientation'] ?: "landscape",
+            'FEATURE_INTERNET': project.properties['features.internet'] ?: "false",
+            'FEATURE_VIBRATION': project.properties['features.vibration'] ?: "false",
+            'FEATURE_ACCELEROMETER': project.properties['features.accelerometer'] ?: "false"
         ]
 
         // Give to CMake the name of the library
         externalNativeBuild {
             cmake {
-                arguments "-DAPP_LIB_NAME=${project.properties['app.native_library_name']}"
+                def nativeLibName = project.findProperty('app.native_library_name') ?: 'raymob'
+                def glVersion = project.findProperty('gl.version') ?: 'ES20'
+
+                arguments "-DAPP_LIB_NAME=$nativeLibName", "-DGL_VERSION=$glVersion"
             }
         }
 
