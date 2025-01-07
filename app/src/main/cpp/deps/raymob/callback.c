@@ -1,9 +1,13 @@
 #include "raymob.h"
 
+static Callback onStart = NULL;
 static Callback onPause = NULL;
 static Callback onResume = NULL;
 static Callback onDestroy = NULL;
 
+void SetOnStartCallBack(Callback callback){
+    onStart = callback;
+}
 void SetOnResumeCallBack(Callback callback){
     onResume = callback;
 }
@@ -14,6 +18,10 @@ void SetOnDestroyCallBack(Callback callback){
     onDestroy = callback;
 }
 
+JNIEXPORT void JNICALL
+custom_onAppStart(JNIEnv *env, jobject /* this */) {
+    if(onStart) onStart();
+}
 JNIEXPORT void JNICALL
 custom_onAppResume(JNIEnv *env, jobject /* this */) {
     if(onResume) onResume();
@@ -28,11 +36,11 @@ custom_onAppDestroy(JNIEnv *env, jobject /* this */) {
 }
 
 static JNINativeMethod methods[] = {
+        {"onAppStart", "()V", (void *)custom_onAppStart},
         {"onAppResume", "()V", (void *)custom_onAppResume},
         {"onAppPause", "()V", (void *)custom_onAppPause},
         {"onAppDestroy", "()V", (void *)custom_onAppDestroy},
 };
-
 
 void InitCallBacks(){
     jobject nativeLoaderInst = GetNativeLoaderInstance();

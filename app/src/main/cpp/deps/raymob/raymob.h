@@ -240,8 +240,10 @@ void KeepScreenOn(bool keepOn);
 typedef void (*Callback)();
 
 void InitCallBacks(void);
+void SetOnStartCallBack(Callback callback);
 void SetOnResumeCallBack(Callback callback);
 void SetOnPauseCallBack(Callback callback);
+void SetOnDestroyCallBack(Callback callback);
 
 
 #if defined(__cplusplus)

@@ -60,6 +60,14 @@ public class NativeLoader extends NativeActivity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        if(initCallback) {
+            onAppStart();
+        }
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         if(initCallback) {
@@ -83,6 +91,7 @@ public class NativeLoader extends NativeActivity {
         }
     }
 
+    private native void onAppStart();
     private native void onAppResume();
     private native void onAppPause();
     private native void onAppDestroy();
