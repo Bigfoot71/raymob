@@ -235,6 +235,15 @@ void SoftKeyboardEditText(char* text, unsigned int size);
  */
 void KeepScreenOn(bool keepOn);
 
+/* Callback functions */
+
+typedef void (*Callback)();
+
+void InitCallBacks(void);
+void SetOnResumeCallBack(Callback callback);
+void SetOnPauseCallBack(Callback callback);
+
+
 #if defined(__cplusplus)
 }
 #endif

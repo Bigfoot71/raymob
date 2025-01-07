@@ -32,6 +32,7 @@ public class NativeLoader extends NativeActivity {
 
     public DisplayManager displayManager;
     public SoftKeyboard softKeyboard;
+    public boolean initCallback = false;
 
     // Loading method of your native application
     @Override
@@ -57,5 +58,33 @@ public class NativeLoader extends NativeActivity {
         softKeyboard.onKeyUpEvent(event);
         return super.onKeyDown(keyCode, event);
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(initCallback) {
+            onAppResume();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(initCallback) {
+            onAppPause();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(initCallback){
+            onAppDestroy();
+        }
+    }
+
+    private native void onAppResume();
+    private native void onAppPause();
+    private native void onAppDestroy();
 
 }
