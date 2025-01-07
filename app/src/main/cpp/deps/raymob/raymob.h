@@ -36,6 +36,10 @@ typedef enum {
     SENSOR_GYROSCOPE        = 1,
 } Sensor;
 
+/* Callback define */
+
+typedef void (*Callback)();
+
 #if defined(__cplusplus)
 extern "C" {
 #endif
@@ -234,6 +238,42 @@ void SoftKeyboardEditText(char* text, unsigned int size);
  * @param keepOn If true, the screen should remain on; otherwise, it should not.
  */
 void KeepScreenOn(bool keepOn);
+
+/* Callback functions */
+
+/**
+ * @brief Initializes all callback functions to their default states.
+ */
+void InitCallBacks(void);
+
+/**
+ * @brief Sets the callback function to be called when the application starts.
+ *
+ * @param callback The callback function to be executed on start.
+ */
+void SetOnStartCallBack(Callback callback);
+
+/**
+ * @brief Sets the callback function to be called when the application resumes.
+ *
+ * @param callback The callback function to be executed on resume.
+ */
+void SetOnResumeCallBack(Callback callback);
+
+/**
+ * @brief Sets the callback function to be called when the application pauses.
+ *
+ * @param callback The callback function to be executed on pause.
+ */
+void SetOnPauseCallBack(Callback callback);
+
+/**
+ * @brief Sets the callback function to be called when the application is destroyed.
+ *
+ * @param callback The callback function to be executed on destroy.
+ */
+void SetOnDestroyCallBack(Callback callback);
+
 
 #if defined(__cplusplus)
 }
