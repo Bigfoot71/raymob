@@ -84,16 +84,16 @@ public class NativeLoader extends NativeActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void onStop() {
+        super.onStop();
         if(initCallback){
-            onAppDestroy();
+            onAppStop();
         }
     }
 
     private native void onAppStart();
     private native void onAppResume();
     private native void onAppPause();
-    private native void onAppDestroy();
+    private native void onAppStop();
 
 }

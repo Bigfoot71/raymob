@@ -3,7 +3,7 @@
 static Callback onStart = NULL;
 static Callback onPause = NULL;
 static Callback onResume = NULL;
-static Callback onDestroy = NULL;
+static Callback onStop = NULL;
 
 void SetOnStartCallBack(Callback callback){
     onStart = callback;
@@ -14,32 +14,32 @@ void SetOnResumeCallBack(Callback callback){
 void SetOnPauseCallBack(Callback callback){
     onPause = callback;
 }
-void SetOnDestroyCallBack(Callback callback){
-    onDestroy = callback;
+void SetOnStopCallBack(Callback callback){
+    onStop = callback;
 }
 
 JNIEXPORT void JNICALL
-custom_onAppStart(JNIEnv *env, jobject /* this */) {
+custom_onAppStart(JNIEnv *env, jobject obj) {
     if(onStart) onStart();
 }
 JNIEXPORT void JNICALL
-custom_onAppResume(JNIEnv *env, jobject /* this */) {
+custom_onAppResume(JNIEnv *env, jobject obj) {
     if(onResume) onResume();
 }
 JNIEXPORT void JNICALL
-custom_onAppPause(JNIEnv *env, jobject /* this */) {
+custom_onAppPause(JNIEnv *env, jobject obj) {
     if(onPause) onPause();
 }
 JNIEXPORT void JNICALL
-custom_onAppDestroy(JNIEnv *env, jobject /* this */) {
-    if(onDestroy) onDestroy();
+custom_onAppStop(JNIEnv *env, jobject obj) {
+    if(onStop) onStop();
 }
 
 static JNINativeMethod methods[] = {
         {"onAppStart", "()V", (void *)custom_onAppStart},
         {"onAppResume", "()V", (void *)custom_onAppResume},
         {"onAppPause", "()V", (void *)custom_onAppPause},
-        {"onAppDestroy", "()V", (void *)custom_onAppDestroy},
+        {"onAppStop", "()V", (void *)custom_onAppStop},
 };
 
 void InitCallBacks(){

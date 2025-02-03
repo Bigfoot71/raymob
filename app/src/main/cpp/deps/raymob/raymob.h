@@ -268,11 +268,11 @@ void SetOnResumeCallBack(Callback callback);
 void SetOnPauseCallBack(Callback callback);
 
 /**
- * @brief Sets the callback function to be called when the application is destroyed.
+ * @brief Sets the callback function to be called when the application is stopped.
  *
  * @param callback The callback function to be executed on destroy.
  */
-void SetOnDestroyCallBack(Callback callback);
+void SetOnStopCallBack(Callback callback);
 
 
 #if defined(__cplusplus)
