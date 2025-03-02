@@ -253,3 +253,164 @@ char* GetL10NString(const char* value)
 
     return NULL;
 }
+
+
+const char* GetAppStoragePath(){
+
+    jobject nativeInstance = GetNativeLoaderInstance();
+
+    if (nativeInstance != NULL)
+    {
+        JNIEnv* env = AttachCurrentThread();
+        
+        // Get the native context class (nativeInstance)
+        jclass nativeClass = (*env)->GetObjectClass(env, nativeInstance);
+
+        // Get the getExternalFilesDir method ID
+        jmethodID getExternalFilesDirMethod = (*env)->GetMethodID(env, nativeClass, "getExternalFilesDir", "(Ljava/lang/String;)Ljava/io/File;");
+
+        // Call getExternalFilesDir(null) to get the root external files directory
+        jobject fileObj = (*env)->CallObjectMethod(env, nativeInstance, getExternalFilesDirMethod, NULL);
+
+        // Get the File class
+        jclass fileClass = (*env)->GetObjectClass(env, fileObj);
+
+        // Get the getAbsolutePath() method ID
+        jmethodID getAbsolutePathMethod = (*env)->GetMethodID(env, fileClass, "getAbsolutePath", "()Ljava/lang/String;");
+
+        // Call getAbsolutePath() to get the Java string
+        jstring jFilePath = (jstring)(*env)->CallObjectMethod(env, fileObj, getAbsolutePathMethod);
+
+        // Convert Java string to C string
+        const char *cFilePath = (*env)->GetStringUTFChars(env, jFilePath, NULL);
+
+        char *filepath = strdup(cFilePath);
+
+        (*env)->ReleaseStringUTFChars(env, jFilePath, cFilePath);
+        (*env)->DeleteLocalRef(env, jFilePath);
+        (*env)->DeleteLocalRef(env, fileClass);
+        (*env)->DeleteLocalRef(env, fileObj);
+        (*env)->DeleteLocalRef(env, nativeClass);
+        
+        DetachCurrentThread();
+
+        return filepath;
+    }
+
+    return NULL;
+}
+
+void* ReadFromAppStorage(const char *filepath, int *dataSize){
+
+    const char *appStoragePath = GetAppStoragePath();
+
+    char path[200];
+    sprintf(path, "%s/%s", appStoragePath, filepath);
+    
+    free((void*)appStoragePath);
+
+    unsigned char *data = NULL;
+    *dataSize = 0;
+
+    FILE *file = fopen(path, "rb");
+
+    if (file == NULL){
+        TraceLog(LOG_WARNING, "FILEIO: [%s] Failed to open file", path);
+        return NULL;
+    }
+
+    // WARNING: On binary streams SEEK_END could not be found,
+    // using fseek() and ftell() could not work in some (rare) cases
+    fseek(file, 0, SEEK_END);
+    int size = ftell(file);     // WARNING: ftell() returns 'long int', maximum size returned is INT_MAX (2147483647 bytes)
+    fseek(file, 0, SEEK_SET);
+
+    if (size > 0)
+    {
+        data = (unsigned char *)RL_MALLOC(size*sizeof(unsigned char));
+
+        if (data != NULL)
+        {
+            // NOTE: fread() returns number of read elements instead of bytes, so we read [1 byte, size elements]
+            size_t count = fread(data, sizeof(unsigned char), size, file);
+
+            // WARNING: fread() returns a size_t value, usually 'unsigned int' (32bit compilation) and 'unsigned long long' (64bit compilation)
+            // dataSize is unified along raylib as a 'int' type, so, for file-sizes > INT_MAX (2147483647 bytes) we have a limitation
+            if (count > 2147483647)
+            {
+                TraceLog(LOG_WARNING, "FILEIO: [%s] File is bigger than 2147483647 bytes, avoid using LoadFileData()", path);
+
+                RL_FREE(data);
+                data = NULL;
+            }
+            else
+            {
+                *dataSize = (int)count;
+
+                if ((*dataSize) != size) TraceLog(LOG_WARNING, "FILEIO: [%s] File partially loaded (%i bytes out of %i)", path, dataSize, count);
+                else TraceLog(LOG_INFO, "FILEIO: [%s] File loaded successfully", path);
+            }
+        }
+        else TraceLog(LOG_WARNING, "FILEIO: [%s] Failed to allocated memory for file reading", path);
+    }
+    else TraceLog(LOG_WARNING, "FILEIO: [%s] Failed to read file", path);
+
+    fclose(file);
+
+    return data;
+}
+
+bool WriteToAppStorage(const char *filepath, void *data, unsigned int dataSize){
+
+    const char *appStoragePath = GetAppStoragePath();
+
+    char path[200];
+    sprintf(path, "%s/%s", appStoragePath, filepath);
+    
+    free((void*)appStoragePath);
+
+    bool success = false;
+
+    FILE *file = fopen(path, "wb");
+
+    if (file != NULL)
+    {
+        // WARNING: fwrite() returns a size_t value, usually 'unsigned int' (32bit compilation) and 'unsigned long long' (64bit compilation)
+        // and expects a size_t input value but as dataSize is limited to INT_MAX (2147483647 bytes), there shouldn't be a problem
+        int count = (int)fwrite(data, sizeof(unsigned char), dataSize, file);
+
+        if (count == 0) TraceLog(LOG_WARNING, "FILEIO: [%s] Failed to write file", path);
+        else if (count != dataSize) TraceLog(LOG_WARNING, "FILEIO: [%s] File partially written", path);
+        else TraceLog(LOG_INFO, "FILEIO: [%s] File saved successfully", path);
+
+        int result = fclose(file);
+        if (result == 0) success = true;
+    }
+    else TraceLog(LOG_WARNING, "FILEIO: [%s] Failed to open file", path);
+
+    return success;
+}
+
+bool IsFileExistsInAppStorage(const char *filepath){
+
+    const char *appStoragePath = GetAppStoragePath();
+
+    char path[200];
+    sprintf(path, "%s/%s", appStoragePath, filepath);
+    
+    free((void*)appStoragePath);
+
+    return (access(path, F_OK) != -1);
+}
+
+void RemoveFileInAppStorage(const char *filepath){
+
+    const char *appStoragePath = GetAppStoragePath();
+
+    char path[200];
+    sprintf(path, "%s/%s", appStoragePath, filepath);
+    
+    free((void*)appStoragePath);
+
+    remove(path);
+}
