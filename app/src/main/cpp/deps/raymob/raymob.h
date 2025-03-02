@@ -274,6 +274,50 @@ void SetOnPauseCallBack(Callback callback);
  */
 void SetOnStopCallBack(Callback callback);
 
+/**
+ * @brief Get the app's external storage path.
+ * 
+ * @return App's external storage path.
+ */
+const char* GetAppStoragePath();
+
+/**
+ * @brief Read file in app's external storage path.
+ *
+ * @param filepath Path of the file relative to app's external storage path.
+ * @param size Variable to store size of data read.
+ * 
+ * @return The data read.
+ */
+void* ReadFromAppStorage(const char *filepath, int *size);
+
+/**
+ * @brief Write file in app's external storage path.
+ *
+ * @param filepath Path of the file relative to app's external storage path.
+ * @param data Pointer to the data.
+ * @param size Size of the data.
+ * 
+ * @return True on success.
+ */
+bool WriteToAppStorage(const char *filepath, void *data, unsigned int size);
+
+/**
+ * @brief Check file exist or not in app's external storage path.
+ *
+ * @param filepath Path of the file relative to app's external storage path.
+ *
+ * @return True if file exists.
+ */
+bool IsFileExistsInAppStorage(const char *filepath);
+
+/**
+ * @brief Remove a file in app's external storage path.
+ *
+ * @param filepath Path of the file relative to app's external storage path.
+ */
+void RemoveFileInAppStorage(const char *filepath);
+
 
 #if defined(__cplusplus)
 }
