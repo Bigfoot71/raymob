@@ -24,6 +24,7 @@
 
 #include "raymob.h"
 #include <stdlib.h>
+#include <unistd.h>
 #include <string.h>
 
 /* Static variables */
