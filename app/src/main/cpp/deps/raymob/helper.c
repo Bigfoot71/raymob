@@ -255,8 +255,7 @@ char* GetL10NString(const char* value)
     return NULL;
 }
 
-
-const char* GetAppStoragePath(){
+char* GetAppStoragePath(){
 
     jobject nativeInstance = GetNativeLoaderInstance();
 
@@ -273,7 +272,7 @@ const char* GetAppStoragePath(){
         // Call getExternalFilesDir(null) to get the root external files directory
         jobject fileObj = (*env)->CallObjectMethod(env, nativeInstance, getExternalFilesDirMethod, NULL);
 
-        // Get the File class
+        // Get the java.io.File class
         jclass fileClass = (*env)->GetObjectClass(env, fileObj);
 
         // Get the getAbsolutePath() method ID
@@ -303,12 +302,11 @@ const char* GetAppStoragePath(){
 
 void* ReadFromAppStorage(const char *filepath, int *dataSize){
 
-    const char *appStoragePath = GetAppStoragePath();
+    char *appStoragePath = GetAppStoragePath();
 
-    char path[200];
-    sprintf(path, "%s/%s", appStoragePath, filepath);
-    
-    free((void*)appStoragePath);
+    int path_len = strlen(appStoragePath) + strlen(filepath) + 2;
+    char *path = (char*)malloc(sizeof(char)*path_len);
+    snprintf(path, path_len, "%s/%s", appStoragePath, filepath);
 
     unsigned char *data = NULL;
     *dataSize = 0;
@@ -358,17 +356,19 @@ void* ReadFromAppStorage(const char *filepath, int *dataSize){
 
     fclose(file);
 
+    free((void*)appStoragePath);
+    free((void*)path);
+
     return data;
 }
 
 bool WriteToAppStorage(const char *filepath, void *data, unsigned int dataSize){
 
-    const char *appStoragePath = GetAppStoragePath();
+    char *appStoragePath = GetAppStoragePath();
 
-    char path[200];
-    sprintf(path, "%s/%s", appStoragePath, filepath);
-    
-    free((void*)appStoragePath);
+    int path_len = strlen(appStoragePath) + strlen(filepath) + 2;
+    char *path = (char*)malloc(sizeof(char)*path_len);
+    snprintf(path, path_len, "%s/%s", appStoragePath, filepath);
 
     bool success = false;
 
@@ -389,29 +389,38 @@ bool WriteToAppStorage(const char *filepath, void *data, unsigned int dataSize){
     }
     else TraceLog(LOG_WARNING, "FILEIO: [%s] Failed to open file", path);
 
+    free((void*)appStoragePath);
+    free((void*)path);
+
     return success;
 }
 
 bool IsFileExistsInAppStorage(const char *filepath){
 
-    const char *appStoragePath = GetAppStoragePath();
+    char *appStoragePath = GetAppStoragePath();
 
-    char path[200];
-    sprintf(path, "%s/%s", appStoragePath, filepath);
-    
+    int path_len = strlen(appStoragePath) + strlen(filepath) + 2;
+    char *path = (char*)malloc(sizeof(char)*path_len);
+    snprintf(path, path_len, "%s/%s", appStoragePath, filepath);
+
+    bool success = (access(path, F_OK) != -1);
+
     free((void*)appStoragePath);
+    free((void*)path);
 
-    return (access(path, F_OK) != -1);
+    return success;
 }
 
 void RemoveFileInAppStorage(const char *filepath){
 
-    const char *appStoragePath = GetAppStoragePath();
+    char *appStoragePath = GetAppStoragePath();
 
-    char path[200];
-    sprintf(path, "%s/%s", appStoragePath, filepath);
-    
-    free((void*)appStoragePath);
+    int path_len = strlen(appStoragePath) + strlen(filepath) + 2;
+    char *path = (char*)malloc(sizeof(char)*path_len);
+    snprintf(path, path_len, "%s/%s", appStoragePath, filepath);
 
     remove(path);
+
+    free((void*)appStoragePath);
+    free((void*)path);
 }
