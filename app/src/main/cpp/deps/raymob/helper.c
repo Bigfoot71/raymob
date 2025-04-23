@@ -106,7 +106,7 @@ char* GetCacheDir(void)
 
     // Allocate memory for the cache path
     size_t len = strlen(pathChars) + 1; // NOTE: +1 for the null terminator
-    char* cachePath = malloc(len);
+    char* cachePath = RL_MALLOC(len);
 
     // Copy the string to the allocated memory
     if (cachePath)
@@ -138,7 +138,7 @@ char* LoadCacheFile(const char* fileName)
     size_t len1 = strlen(cacheDir);
     size_t len2 = strlen(fileName);
     size_t len = len1 + len2 + 1;
-    char *filePath = malloc(len);
+    char *filePath = RL_MALLOC(len);
     strncpy(filePath, cacheDir, len1);
     filePath[len1] = '/';
     strncpy(filePath + len1 + 1, fileName, len2);
@@ -178,6 +178,9 @@ char* LoadCacheFile(const char* fileName)
         fclose(file);
     }
     else TraceLog(LOG_WARNING, "FILEIO: File name provided is not valid");
+
+    RL_FREE(filePath);
+    RL_FREE(cacheDir);
 
     return text;
 }
@@ -237,7 +240,7 @@ char* GetL10NString(const char* value)
 
         // Allocate memory for returned string
         size_t len = strlen(strReturn) + 1;
-        char* stringValue = malloc(len);
+        char* stringValue = RL_MALLOC(len);
 
         if (stringValue) {
             strncpy(stringValue, strReturn, len);
@@ -304,9 +307,9 @@ void* ReadFromAppStorage(const char *filepath, int *dataSize){
 
     char *appStoragePath = GetAppStoragePath();
 
-    int path_len = strlen(appStoragePath) + strlen(filepath) + 2;
-    char *path = (char*)malloc(sizeof(char)*path_len);
-    snprintf(path, path_len, "%s/%s", appStoragePath, filepath);
+    size_t pathLen = strlen(appStoragePath) + strlen(filepath) + 2;
+    char *path = RL_MALLOC(sizeof(char)*pathLen);
+    snprintf(path, pathLen, "%s/%s", appStoragePath, filepath);
 
     unsigned char *data = NULL;
     *dataSize = 0;
@@ -315,6 +318,8 @@ void* ReadFromAppStorage(const char *filepath, int *dataSize){
 
     if (file == NULL){
         TraceLog(LOG_WARNING, "FILEIO: [%s] Failed to open file", path);
+        RL_FREE(appStoragePath);
+        RL_FREE(path);
         return NULL;
     }
 
@@ -326,7 +331,7 @@ void* ReadFromAppStorage(const char *filepath, int *dataSize){
 
     if (size > 0)
     {
-        data = (unsigned char *)RL_MALLOC(size*sizeof(unsigned char));
+        data = RL_MALLOC(size*sizeof(unsigned char));
 
         if (data != NULL)
         {
@@ -356,8 +361,8 @@ void* ReadFromAppStorage(const char *filepath, int *dataSize){
 
     fclose(file);
 
-    free((void*)appStoragePath);
-    free((void*)path);
+    RL_FREE(appStoragePath);
+    RL_FREE(path);
 
     return data;
 }
@@ -366,9 +371,9 @@ bool WriteToAppStorage(const char *filepath, void *data, unsigned int dataSize){
 
     char *appStoragePath = GetAppStoragePath();
 
-    int path_len = strlen(appStoragePath) + strlen(filepath) + 2;
-    char *path = (char*)malloc(sizeof(char)*path_len);
-    snprintf(path, path_len, "%s/%s", appStoragePath, filepath);
+    size_t pathLen = strlen(appStoragePath) + strlen(filepath) + 2;
+    char *path = RL_MALLOC(sizeof(char)*pathLen);
+    snprintf(path, pathLen, "%s/%s", appStoragePath, filepath);
 
     bool success = false;
 
@@ -389,8 +394,8 @@ bool WriteToAppStorage(const char *filepath, void *data, unsigned int dataSize){
     }
     else TraceLog(LOG_WARNING, "FILEIO: [%s] Failed to open file", path);
 
-    free((void*)appStoragePath);
-    free((void*)path);
+    RL_FREE(appStoragePath);
+    RL_FREE(path);
 
     return success;
 }
@@ -399,14 +404,14 @@ bool IsFileExistsInAppStorage(const char *filepath){
 
     char *appStoragePath = GetAppStoragePath();
 
-    int path_len = strlen(appStoragePath) + strlen(filepath) + 2;
-    char *path = (char*)malloc(sizeof(char)*path_len);
-    snprintf(path, path_len, "%s/%s", appStoragePath, filepath);
+    size_t pathLen = strlen(appStoragePath) + strlen(filepath) + 2;
+    char *path = RL_MALLOC(sizeof(char)*pathLen);
+    snprintf(path, pathLen, "%s/%s", appStoragePath, filepath);
 
     bool success = (access(path, F_OK) != -1);
 
-    free((void*)appStoragePath);
-    free((void*)path);
+    RL_FREE(appStoragePath);
+    RL_FREE(path);
 
     return success;
 }
@@ -415,12 +420,12 @@ void RemoveFileInAppStorage(const char *filepath){
 
     char *appStoragePath = GetAppStoragePath();
 
-    int path_len = strlen(appStoragePath) + strlen(filepath) + 2;
-    char *path = (char*)malloc(sizeof(char)*path_len);
-    snprintf(path, path_len, "%s/%s", appStoragePath, filepath);
+    size_t pathLen = strlen(appStoragePath) + strlen(filepath) + 2;
+    char *path = RL_MALLOC(sizeof(char)*pathLen);
+    snprintf(path, pathLen, "%s/%s", appStoragePath, filepath);
 
     remove(path);
 
-    free((void*)appStoragePath);
-    free((void*)path);
+    RL_FREE(appStoragePath);
+    RL_FREE(path);
 }
