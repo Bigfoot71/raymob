@@ -65,7 +65,7 @@ public class SoftKeyboard {
         return 0;
     }
 
-    public void clearLastEvent() {
+    public void clearLastKeyEvent() {
         lastKeyEvent = null;
     }
 
