@@ -34,11 +34,6 @@ target_compile_definitions(${APP_LIB_NAME} PRIVATE PLATFORM_ANDROID)
 # Apply flags depending on the build type
 if(CMAKE_BUILD_TYPE MATCHES "Debug")
     target_compile_definitions(${APP_LIB_NAME} PRIVATE _DEBUG DEBUG)
-    set(CMAKE_CXX_FLAGS_DEBUG "-g -fno-limit-debug-info")
-    set(CMAKE_C_FLAGS_DEBUG "-g -fno-limit-debug-info")
-elseif(CMAKE_BUILD_TYPE MATCHES "Release")
-    set(CMAKE_CXX_FLAGS_RELEASE "-O2 -DNDEBUG")
-    set(CMAKE_C_FLAGS_RELEASE "-O2 -DNDEBUG")
 endif()
 
 # Include raylib and raymob header files
