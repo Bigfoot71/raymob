@@ -6,7 +6,7 @@ raymob is a simple implementation of [raylib](https://www.raylib.com/) for Andro
 
 ## Prerequisites
 
-**You will need SDK API 34 and NDK r21 (or higher, compatible with CMake 3.22.1).**
+**You will need SDK API 34 and NDK r23 (or higher, compatible with CMake 3.22.1).**
 
 If you already have this version of SDK and NDK without having Android Studio, you should still be able to compile the project using `gradlew.bat` for Windows or `gradlew` for Linux or MacOS.
 
