@@ -1,5 +1,7 @@
 package com.raylib.raymob;
 
+import android.os.Build;
+import android.view.Display;
 import android.view.View;
 import android.app.NativeActivity;
 import android.view.WindowManager.LayoutParams;
@@ -7,6 +9,7 @@ import android.view.WindowManager.LayoutParams;
 public class DisplayManager {
 
     NativeActivity activity;
+    public Display display;
 
     public DisplayManager(android.content.Context context) {
         activity = (NativeActivity)(context);
@@ -18,6 +21,11 @@ public class DisplayManager {
         }
         if (BuildConfig.FEATURE_DISPLAY_INTO_CUTOUT) {
             renderIntoCutoutArea();
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            display = context.getDisplay();
+        } else {
+            display = ((NativeActivity) (context)).getWindowManager().getDefaultDisplay();
         }
     }
 
@@ -38,6 +46,11 @@ public class DisplayManager {
             View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION  |
             View.SYSTEM_UI_FLAG_LAYOUT_STABLE
         );
+    }
+
+    public int getOrientation()
+    {
+        return display != null ? display.getRotation() : -1;
     }
 
     public void renderIntoCutoutArea() {

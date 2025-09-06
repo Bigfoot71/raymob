@@ -44,3 +44,31 @@ void KeepScreenOn(bool keepOn)
         DetachCurrentThread();
     }
 }
+
+Orientation GetScreenOrientation()
+{
+    Orientation result = 0;
+    jobject nativeLoaderInst = GetNativeLoaderInstance();
+
+    if (nativeLoaderInst != NULL) {
+        JNIEnv* env = AttachCurrentThread();
+
+        jclass nativeLoaderClass = (*env)->GetObjectClass(env, nativeLoaderInst);
+        jfieldID displayManagerField = (*env)->GetFieldID(env, nativeLoaderClass, "displayManager", "Lcom/raylib/raymob/DisplayManager;");
+        jobject displayManager = (*env)->GetObjectField(env, nativeLoaderInst, displayManagerField);
+
+        if (displayManager != NULL) {
+            jclass displayManagerClass = (*env)->GetObjectClass(env, displayManager);
+            jmethodID screenOrientationMethod = (*env)->GetMethodID(env, displayManagerClass, "getOrientation", "()I");
+            jint screenOrientation = (*env)->CallIntMethod(env, displayManager, screenOrientationMethod);
+
+            if (result >= 0 && result < 4) { // just sanity checking in case android API changes
+                result = screenOrientation;
+            }
+        }
+
+        DetachCurrentThread();
+    }
+
+    return result;
+}
