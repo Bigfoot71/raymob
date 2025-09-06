@@ -36,6 +36,15 @@ typedef enum {
     SENSOR_GYROSCOPE        = 1,
 } Sensor;
 
+typedef enum {
+    ORIENTATION_PORTRAIT           = 0,
+    ORIENTATION_LANDSCAPE          = 1,
+    ORIENTATION_PORTRAIT_REVERSED  = 2,
+    ORIENTATION_LANDSCAPE_REVERSED = 3,
+    ORIENTATION_OTHER              = -1,
+} Orientation;
+
+
 /* Callback define */
 
 typedef void (*Callback)();
@@ -165,6 +174,11 @@ void EnableSensor(Sensor sensor);
 void DisableSensor(Sensor sensor);
 
 /**
+ * Get screen orientation.
+ */
+Orientation GetScreenOrientation();
+
+/**
  * @brief Retrieves the current accelerometer axis values.
  *
  * @return A Vector3 representing the accelerometer axis (x, y, z).
@@ -276,11 +290,11 @@ void SetOnStopCallBack(Callback callback);
 
 /**
  * @brief Get the app specific storage root path.
- * 
+ *
  * @warning This function returns a string allocated on the heap.
  * The responsibility for releasing the memory lies with the user.
  * Use free().
- * 
+ *
  * @return app specific storage path.
  */
 char* GetAppStoragePath();
@@ -290,7 +304,7 @@ char* GetAppStoragePath();
  *
  * @param filepath Path of the file relative to app specific storage.
  * @param size Variable to store size of data read.
- * 
+ *
  * @return the data read.
  */
 void* ReadFromAppStorage(const char *filepath, int *size);
@@ -301,7 +315,7 @@ void* ReadFromAppStorage(const char *filepath, int *size);
  * @param filepath Path of the file relative to app specific storage.
  * @param data Pointer to the data.
  * @param size Size of the data.
- * 
+ *
  * @return true on success.
  */
 bool WriteToAppStorage(const char *filepath, void *data, unsigned int size);
