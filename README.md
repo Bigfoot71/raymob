@@ -6,14 +6,18 @@ raymob is a simple implementation of [raylib](https://www.raylib.com/) for Andro
 
 ## Prerequisites
 
-**You will need SDK API 34 and NDK r23 (or higher, compatible with CMake 3.22.1).**
+**You will need SDK API 34 and NDK r23 (or higher, compatible with CMake 3.30.3).**
 
 If you already have this version of SDK and NDK without having Android Studio, you should still be able to compile the project using `gradlew.bat` for Windows or `gradlew` for Linux or MacOS.
 
 ## How to Use?
 
-1. Open the `gradle.properties` file and fill in the necessary values for your application, such as the app name, package name, version, etc.
-2. That's it! You can start coding your raylib app in the `app/src/main/cpp` directory!
+1. Clone the repository and automatically initialize and update all submodules:
+   ```
+   git clone --recurse-submodules https://github.com/Bigfoot71/raymob.git
+   ```
+2. Open the `gradle.properties` file and fill in the necessary values for your application, such as the app name, package name, version, etc.
+3. That's it! You can start coding your raylib app in the `app/src/main/cpp` directory!
 
 **Note**: Do not modify the instances of `com.raylib.raymob` and `raymob` as they will be automatically replaced during compilation with the information provided in `gradle.properties`.
 
