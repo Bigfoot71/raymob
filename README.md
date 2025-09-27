@@ -1,6 +1,6 @@
 <img src="app/src/main/ic_launcher-playstore.png" alt="raymob icon" width="256" height="256">
 
-# raymob [![Targeting raylib 5.5](https://img.shields.io/badge/raylib-5.5-3DDC84)](https://raylib.com) [![Supported Platforms](https://img.shields.io/badge/Platform-Android-3DDC84)](https://developer.android.com/) [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) [![License](https://img.shields.io/badge/license-zlib%2Flibpng-blue.svg)](LICENSE)
+# raymob [![Targeting raylib 5.5+](https://img.shields.io/badge/raylib-5.5+-3DDC84)](https://raylib.com) [![Supported Platforms](https://img.shields.io/badge/Platform-Android-3DDC84)](https://developer.android.com/) [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) [![License](https://img.shields.io/badge/license-zlib%2Flibpng-blue.svg)](LICENSE)
 
 raymob is a simple implementation of [raylib](https://www.raylib.com/) for Android.
 
@@ -19,7 +19,8 @@ If you already have this version of SDK and NDK without having Android Studio, y
 2. Open the `gradle.properties` file and fill in the necessary values for your application, such as the app name, package name, version, etc.
 3. That's it! You can start coding your raylib app in the `app/src/main/cpp` directory!
 
-**Note**: Do not modify the instances of `com.raylib.raymob` and `raymob` as they will be automatically replaced during compilation with the information provided in `gradle.properties`.
+> [!NOTE]
+> Do not modify the instances of `com.raylib.raymob` and `raymob` as they will be automatically replaced during compilation with the information provided in `gradle.properties`.
 
 ## Compatibility
 
