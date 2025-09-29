@@ -72,7 +72,10 @@ android {
                 def nativeLibName = project.findProperty('app.native_library_name') ?: 'raymob'
                 def glVersion = project.findProperty('gl.version') ?: 'ES20'
 
-                arguments "-DAPP_LIB_NAME=$nativeLibName", "-DGL_VERSION=$glVersion"
+                arguments "-DPLATFORM=Android",
+                          "-DBUILD_EXAMPLES=OFF",
+                          "-DAPP_LIB_NAME=$nativeLibName",
+                          "-DGL_VERSION=$glVersion"
             }
         }
 
@@ -149,7 +152,7 @@ android {
     externalNativeBuild {
         cmake {
             path file('src/main/cpp/CMakeLists.txt')
-            version '3.22.1'
+            version '3.30.3'
         }
     }
     buildFeatures {
