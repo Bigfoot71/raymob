@@ -38,13 +38,13 @@ jobs:
           ./gradlew build
 
       - name: Upload debug APKs
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: debug-apks
           path: ./app/build/outputs/apk/debug/*.apk
 
       - name: Upload release APKs
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: release-apks
           path: ./app/build/outputs/apk/release/*.apk
