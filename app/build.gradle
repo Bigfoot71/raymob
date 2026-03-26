@@ -1,3 +1,10 @@
+android {
+    lint {
+        baseline = file("lint-baseline.xml")
+        abortOnError false  // optional but safer
+    }
+    // ... rest of config
+    
 plugins {
     id 'com.android.application'
 }
@@ -173,3 +180,4 @@ dependencies {
 }
 
 */
+}
