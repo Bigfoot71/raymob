@@ -1,9 +1,3 @@
-android {
-    lint {
-        baseline = file("lint-baseline.xml")
-        abortOnError false  // optional but safer
-    }
-    // ... rest of config
     
 plugins {
     id 'com.android.application'
@@ -42,6 +36,12 @@ static def getGLVersionCode(String version) {
 }
 
 android {
+        lint {
+        baseline = file("lint-baseline.xml")
+        abortOnError false  // optional but safer
+    }
+    // ... rest of config
+    
     namespace project.properties['app.application_id']
     compileSdk 34
 
@@ -180,4 +180,4 @@ dependencies {
 }
 
 */
-}
+
