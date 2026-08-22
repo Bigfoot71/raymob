@@ -17,20 +17,12 @@ jobs:
 
     steps:
       - name: Check out code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         with:
           submodules: true
 
-      - name: Set up Java
-        uses: actions/setup-java@v5
-        with:
-          java-version: '8'
-          distribution: 'temurin'
-
-      - name: Set up CMake
-        uses: jwlawson/actions-setup-cmake@v2
-        with:
-          cmake-version: '3.30.3'
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v6
 
       - name: Build project
         run: |
@@ -38,13 +30,13 @@ jobs:
           ./gradlew build
 
       - name: Upload debug APKs
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: debug-apks
           path: ./app/build/outputs/apk/debug/*.apk
 
       - name: Upload release APKs
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: release-apks
           path: ./app/build/outputs/apk/release/*.apk
