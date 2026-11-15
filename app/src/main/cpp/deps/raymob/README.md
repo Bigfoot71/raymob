@@ -1,7 +1,9 @@
-# Gradle compatibility file
+# raymob Android native support
 
-`display.c` is kept because the existing `app/build.gradle` preBuild hook opens
-that exact path. The current native client uses raylib directly; its CMake
-configuration deliberately does not compile this legacy compatibility file.
-Do not remove `display.c` unless the Gradle hook outside this directory is
-changed as well.
+This directory contains the Android native support sources from
+https://github.com/Bigfoot71/raymob (MIT license; upstream copyright notices
+are retained in the source files).
+
+The Gradle preBuild step in app/build.gradle edits JNI class descriptors in
+display.c and soft_keyboard.c. Both files must remain present at these paths.
+CMake builds the support sources as raymoblib and links it to the application.
