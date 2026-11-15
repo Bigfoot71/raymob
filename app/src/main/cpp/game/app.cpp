@@ -10,11 +10,11 @@
 namespace nbapp {
 namespace {
 
-static const Color BLACK = {8, 8, 8, 255};
+static const Color UI_BLACK = {8, 8, 8, 255};
 static const Color DARK = {24, 24, 24, 255};
 static const Color MID = {92, 92, 92, 255};
 static const Color LIGHT = {190, 190, 190, 255};
-static const Color WHITE = {245, 245, 245, 255};
+static const Color UI_WHITE = {245, 245, 245, 255};
 
 // Встроенный 5x7 шрифт: не зависит от системных шрифтов и поддерживает кириллицу.
 uint32_t nextCodepoint(const std::string& s, std::size_t& i) {
@@ -113,10 +113,10 @@ bool inside(Rectangle r, Vector2 p) {
 bool button(const char* label, Rectangle r, bool enabled = true) {
     Vector2 mouse = GetMousePosition();
     bool hover = inside(r, mouse);
-    Color fill = enabled ? (hover ? WHITE : DARK) : Color{35,35,35,255};
-    Color text = enabled ? (hover ? BLACK : WHITE) : MID;
+    Color fill = enabled ? (hover ? UI_WHITE : DARK) : Color{35,35,35,255};
+    Color text = enabled ? (hover ? UI_BLACK : UI_WHITE) : MID;
     DrawRectangleRec(r, fill);
-    DrawRectangleLinesEx(r, 2.0f, enabled ? WHITE : MID);
+    DrawRectangleLinesEx(r, 2.0f, enabled ? UI_WHITE : MID);
     int size = static_cast<int>(std::max(12.0f, std::min(22.0f, r.height * 0.34f)));
     int tw = pixelTextWidth(label, size);
     pixelText(label, static_cast<int>(r.x + (r.width - tw) / 2), static_cast<int>(r.y + (r.height - size) / 2), size, text);
@@ -144,7 +144,7 @@ bool pointerHeld(Rectangle r) {
 void drawBar(int x, int y, int w, int h, int value, int maximum) {
     DrawRectangle(x, y, w, h, DARK);
     int fill = maximum > 0 ? (w * std::max(0, std::min(value, maximum))) / maximum : 0;
-    DrawRectangle(x, y, fill, h, WHITE);
+    DrawRectangle(x, y, fill, h, UI_WHITE);
     DrawRectangleLines(x, y, w, h, MID);
 }
 
@@ -172,7 +172,7 @@ void App::frame() {
     else updateGame(dt);
 
     BeginDrawing();
-    ClearBackground(BLACK);
+    ClearBackground(UI_BLACK);
     if (screen_ == SCREEN_MENU) drawMenu();
     else drawGame();
     EndDrawing();
@@ -276,13 +276,13 @@ void App::drawMenu() {
     const int w = GetScreenWidth(), h = GetScreenHeight(), center = w / 2;
     const float left = w * 0.08f, width = w * 0.84f;
     float y = h * 0.045f;
-    pixelText("ПЕРСОНАЖ", center - pixelTextWidth("ПЕРСОНАЖ", 25) / 2, static_cast<int>(y), 25, WHITE);
+    pixelText("ПЕРСОНАЖ", center - pixelTextWidth("ПЕРСОНАЖ", 25) / 2, static_cast<int>(y), 25, UI_WHITE);
     y += 44;
 
     pixelText("ИМЯ", static_cast<int>(left), static_cast<int>(y), 14, LIGHT);
     Rectangle nameRect = {left, y + 20, width, 42}; panel(nameRect);
-    DrawRectangleLinesEx(nameRect, focus_ == FOCUS_NAME ? 2.0f : 1.0f, focus_ == FOCUS_NAME ? WHITE : MID);
-    pixelText(playerName_.c_str(), static_cast<int>(left + 10), static_cast<int>(y + 34), 17, WHITE);
+    DrawRectangleLinesEx(nameRect, focus_ == FOCUS_NAME ? 2.0f : 1.0f, focus_ == FOCUS_NAME ? UI_WHITE : MID);
+    pixelText(playerName_.c_str(), static_cast<int>(left + 10), static_cast<int>(y + 34), 17, UI_WHITE);
     y += 78;
 
     pixelText("КЛАСС", static_cast<int>(left), static_cast<int>(y), 14, LIGHT);
@@ -291,7 +291,7 @@ void App::drawMenu() {
     if (button("<", prev)) classId_ = (classId_ + 3) % 4;
     if (button(">", next)) classId_ = (classId_ + 1) % 4;
     const char* classes[4] = {"ВОИН", "ЛУЧНИК", "МАГ", "НЕКРОМАНТ"};
-    pixelText(classes[classId_], center - pixelTextWidth(classes[classId_], 17) / 2, static_cast<int>(y + 30), 17, WHITE);
+    pixelText(classes[classId_], center - pixelTextWidth(classes[classId_], 17) / 2, static_cast<int>(y + 30), 17, UI_WHITE);
     y += 78;
 
     const float bh = std::max(44.0f, std::min(56.0f, h * 0.055f));
@@ -305,8 +305,8 @@ void App::drawMenu() {
     y += bh + 12;
     pixelText("АДРЕС СЕРВЕРА", static_cast<int>(left), static_cast<int>(y), 14, LIGHT);
     Rectangle addressRect = {left, y + 19, width, 42}; panel(addressRect);
-    DrawRectangleLinesEx(addressRect, focus_ == FOCUS_ADDRESS ? 2.0f : 1.0f, focus_ == FOCUS_ADDRESS ? WHITE : MID);
-    pixelText(address_.c_str(), static_cast<int>(left + 10), static_cast<int>(y + 32), 16, WHITE);
+    DrawRectangleLinesEx(addressRect, focus_ == FOCUS_ADDRESS ? 2.0f : 1.0f, focus_ == FOCUS_ADDRESS ? UI_WHITE : MID);
+    pixelText(address_.c_str(), static_cast<int>(left + 10), static_cast<int>(y + 32), 16, UI_WHITE);
     y += 69;
     if (button("ПОДКЛЮЧИТЬСЯ", Rectangle{left, y, width, bh})) {
         std::string host = address_; int port = GAME_PORT;
@@ -391,7 +391,7 @@ void App::drawMap(const Player& me, int top, int bottom) {
     const int mapW = cols * cell, mapH = rows * cell;
     const int sx0 = (w - mapW) / 2, sy0 = top + (availableH - mapH) / 2;
     const int ox = me.x - cols / 2, oy = me.y - rows / 2;
-    DrawRectangle(sx0 - 3, sy0 - 3, mapW + 6, mapH + 6, WHITE);
+    DrawRectangle(sx0 - 3, sy0 - 3, mapW + 6, mapH + 6, UI_WHITE);
     const Color grass = {34, 54, 36, 255}, wall = {94, 94, 94, 255}, tree = {22, 32, 23, 255};
     const Color water = {31, 55, 75, 255}, path = {81, 73, 57, 255}, ruins = {72, 68, 65, 255}, sand = {92, 82, 54, 255};
     const Color snow = {138, 150, 157, 255}, mud = {62, 52, 39, 255};
@@ -412,7 +412,7 @@ void App::drawMap(const Player& me, int top, int bottom) {
         const Loot& l = world_.loot()[i]; if (!l.active) continue;
         int sx = l.x - ox, sy = l.y - oy; if (sx < 0 || sy < 0 || sx >= cols || sy >= rows) continue;
         const char* marker = l.type == LOOT_POTION ? "!" : (l.type == LOOT_EQUIPMENT ? "*" : "$" );
-        pixelText(marker, sx0 + sx * cell + cell / 4, sy0 + sy * cell + cell / 6, std::max(14, cell * 2 / 3), WHITE);
+        pixelText(marker, sx0 + sx * cell + cell / 4, sy0 + sy * cell + cell / 6, std::max(14, cell * 2 / 3), UI_WHITE);
     }
     for (std::size_t i = 0; i < world_.monsters().size(); ++i) {
         const Monster& m = world_.monsters()[i]; int sx = m.x - ox, sy = m.y - oy;
@@ -424,7 +424,7 @@ void App::drawMap(const Player& me, int top, int bottom) {
     for (std::size_t i = 0; i < world_.players().size(); ++i) {
         const Player& p = world_.players()[i]; int sx = p.x - ox, sy = p.y - oy;
         if (sx < 0 || sy < 0 || sx >= cols || sy >= rows) continue;
-        pixelText(p.id == playerId_ ? "@" : "&", sx0 + sx * cell + cell / 5, sy0 + sy * cell + cell / 7, std::max(15, cell * 3 / 4), p.alive ? WHITE : MID);
+        pixelText(p.id == playerId_ ? "@" : "&", sx0 + sx * cell + cell / 5, sy0 + sy * cell + cell / 7, std::max(15, cell * 3 / 4), p.alive ? UI_WHITE : MID);
     }
 }
 
@@ -432,14 +432,14 @@ void App::drawGame() {
     const int w = GetScreenWidth(), h = GetScreenHeight();
     const Player* me = world_.findPlayer(playerId_);
     if (!me) {
-        pixelText(online_ ? "ПОДКЛЮЧЕНИЕ" : "ЗАГРУЗКА", 18, 24, 22, WHITE);
+        pixelText(online_ ? "ПОДКЛЮЧЕНИЕ" : "ЗАГРУЗКА", 18, 24, 22, UI_WHITE);
         pixelText(online_ ? "ОЖИДАНИЕ ДАННЫХ МИРА" : "ПЕРСОНАЖ НЕ НАЙДЕН", 18, 58, 14, LIGHT);
         if (button("В МЕНЮ", Rectangle{18, static_cast<float>(h - 78), 145, 48})) leaveGame();
         return;
     }
     std::ostringstream status;
     status << me->name << "  " << className(me->classId) << "  LV " << me->level;
-    pixelText(status.str().c_str(), 12, 8, 14, WHITE);
+    pixelText(status.str().c_str(), 12, 8, 14, UI_WHITE);
     std::ostringstream hp;
     hp << "HP " << me->hp << '/' << me->maxHp << "   MP " << me->mana << '/' << me->maxMana;
     pixelText(hp.str().c_str(), 12, 28, 12, LIGHT);
@@ -457,7 +457,7 @@ void App::drawGame() {
         const int panelX = 12, panelY = 90, panelW = w - 24, panelH = std::max(180, controlTop - panelY - 8);
         DrawRectangle(panelX, panelY, panelW, panelH, DARK);
         DrawRectangleLines(panelX, panelY, panelW, panelH, LIGHT);
-        pixelText("ЭКИПИРОВКА", panelX + 10, panelY + 9, 14, WHITE);
+        pixelText("ЭКИПИРОВКА", panelX + 10, panelY + 9, 14, UI_WHITE);
         const char* slots[SLOT_COUNT] = {"ОРУЖИЕ: ", "БРОНЯ: ", "АМУЛЕТ: "};
         for (int i = 0; i < SLOT_COUNT; ++i) {
             std::string line = slots[i];
@@ -469,7 +469,7 @@ void App::drawGame() {
             pixelText(line.c_str(), panelX + 10, panelY + 31 + i * 17, 10, LIGHT);
         }
         std::ostringstream heading; heading << "СУМКА " << me->inventory.size() << '/' << INVENTORY_CAPACITY;
-        pixelText(heading.str().c_str(), panelX + 10, panelY + 91, 13, WHITE);
+        pixelText(heading.str().c_str(), panelX + 10, panelY + 91, 13, UI_WHITE);
         const float gap = 5.0f;
         const float itemW = (panelW - 30.0f - gap) / 2.0f;
         const float itemH = 38.0f;
@@ -519,7 +519,7 @@ void App::drawGame() {
     }
     if (!me->alive) {
         DrawRectangle(0, 0, w, h, Color{0, 0, 0, 190});
-        pixelText("ПЕРСОНАЖ ПОГИБ", w / 2 - pixelTextWidth("ПЕРСОНАЖ ПОГИБ", 24) / 2, h / 2 - 32, 24, WHITE);
+        pixelText("ПЕРСОНАЖ ПОГИБ", w / 2 - pixelTextWidth("ПЕРСОНАЖ ПОГИБ", 24) / 2, h / 2 - 32, 24, UI_WHITE);
         if (button("В МЕНЮ", Rectangle{w / 2.0f - 86, h / 2.0f + 12, 172, 48})) leaveGame();
     }
 }
