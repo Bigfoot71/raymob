@@ -1,17 +1,26 @@
-# Define a library for raymoblib
-add_library(raymoblib STATIC helper.c sensor.c vibrator.c display.c soft_keyboard.c callback.c)
+# Native Android support library from the raymob template.
+add_library(raymoblib STATIC
+    helper.c
+    sensor.c
+    vibrator.c
+    display.c
+    soft_keyboard.c
+    callback.c
+)
 
-# Include headers directory for android_native_app_glue.c
-include_directories(${ANDROID_NDK}/sources/android/native_app_glue/)
-
-# Add android_native_app_glue.c to the source files
-list(APPEND SOURCES ${ANDROID_NDK}/sources/android/native_app_glue/android_native_app_glue.c)
-
-# Define compiler macros for the library
 target_compile_definitions(raymoblib PRIVATE PLATFORM_ANDROID)
 
-# Include raylib header files
-target_include_directories(raymoblib PRIVATE "${CMAKE_SOURCE_DIR}/deps/raylib")
+# NATIVE_APP_GLUE_DIR is resolved by the parent CMakeLists.txt from either
+# ANDROID_NDK or CMAKE_ANDROID_NDK and is shared with the raymob headers.
+target_include_directories(raymoblib
+    PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}"
+    PRIVATE
+        "${raylib_SOURCE_DIR}/src"
+        "${NATIVE_APP_GLUE_DIR}"
+)
 
-# Link required libraries to raylib
-target_link_libraries(raymoblib raylib)
+target_link_libraries(raymoblib PUBLIC
+    raylib
+    android
+    log
+)
