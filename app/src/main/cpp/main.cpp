@@ -1,4 +1,4 @@
-#include "raymob.h"
+#include "raylib.h"
 #include "game/app.h"
 
 int main() {

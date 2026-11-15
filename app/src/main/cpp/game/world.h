@@ -12,9 +12,13 @@ static const int WORLD_H = 96;
 static const int MAX_PLAYERS = 8;
 static const int INVENTORY_CAPACITY = 8;
 
-enum TileType { TILE_GRASS = 0, TILE_WALL, TILE_TREE, TILE_WATER, TILE_PATH, TILE_RUINS, TILE_SAND };
+enum TileType { TILE_GRASS = 0, TILE_WALL, TILE_TREE, TILE_WATER, TILE_PATH, TILE_RUINS, TILE_SAND, TILE_SNOW, TILE_MUD };
+enum BiomeType { BIOME_MEADOW = 0, BIOME_FOREST, BIOME_DESERT, BIOME_SWAMP, BIOME_TUNDRA, BIOME_RUINS };
 enum ClassType { CLASS_WARRIOR = 0, CLASS_ARCHER, CLASS_MAGE, CLASS_NECROMANCER };
-enum MonsterType { MOB_SLIME = 0, MOB_GOBLIN, MOB_SKELETON, MOB_BAT, MOB_ORC, MOB_WOLF };
+enum MonsterType {
+    MOB_SLIME = 0, MOB_GOBLIN, MOB_SKELETON, MOB_BAT, MOB_ORC, MOB_WOLF,
+    MOB_SPIDER, MOB_SCORPION, MOB_SHAMAN, MOB_GOLEM, MOB_WRAITH, MOB_BOSS
+};
 enum LootType { LOOT_GOLD = 0, LOOT_POTION, LOOT_EQUIPMENT };
 enum ItemType {
     ITEM_NONE = 0,
@@ -58,6 +62,8 @@ struct Monster {
     int hp, maxHp;
     int type;
     bool alive;
+    float moveTimer;
+    float attackTimer;
     Monster();
 };
 
@@ -94,6 +100,7 @@ public:
     bool isWalkable(int x, int y) const;
     bool isOccupiedByPlayer(int x, int y, int exceptId = -1) const;
     int tileAt(int x, int y) const;
+    int biomeAt(int x, int y) const;
     const Player* findPlayer(int id) const;
     Player* findPlayer(int id);
     bool equipInventoryItem(int playerId, int inventoryIndex);
@@ -115,7 +122,6 @@ private:
     int tick_;
     int nextMonsterId_;
     int nextLootId_;
-    float monsterAccumulator_;
 
     bool monsterAt(int x, int y, int* index = 0) const;
     bool lootAt(int x, int y, int* index = 0) const;
@@ -123,7 +129,10 @@ private:
     void usePotion(Player& player);
     void attack(Player& player, int dx, int dy, int multiplier = 1);
     void damageMonster(Player& player, Monster& monster, int damage);
-    void moveMonsters();
+    void moveMonsters(float deltaSeconds);
+    float monsterMoveInterval(int monsterType) const;
+    float monsterAttackInterval(int monsterType) const;
+    void attackPlayer(Monster& monster, Player& player);
     void moveMonster(Monster& monster, const Player& target);
     void collectLoot(Player& player);
     void addXp(Player& player, int amount);
@@ -137,6 +146,7 @@ private:
 
 const char* className(int classId);
 const char* monsterName(int monsterId);
+const char* biomeName(int biomeId);
 const char* itemName(int itemType);
 const char* rarityName(int rarity);
 int itemSlot(int itemType);

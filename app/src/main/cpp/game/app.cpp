@@ -394,12 +394,14 @@ void App::drawMap(const Player& me, int top, int bottom) {
     DrawRectangle(sx0 - 3, sy0 - 3, mapW + 6, mapH + 6, WHITE);
     const Color grass = {34, 54, 36, 255}, wall = {94, 94, 94, 255}, tree = {22, 32, 23, 255};
     const Color water = {31, 55, 75, 255}, path = {81, 73, 57, 255}, ruins = {72, 68, 65, 255}, sand = {92, 82, 54, 255};
+    const Color snow = {138, 150, 157, 255}, mud = {62, 52, 39, 255};
     for (int sy = 0; sy < rows; ++sy) for (int sx = 0; sx < cols; ++sx) {
         int wx = ox + sx, wy = oy + sy, t = world_.tileAt(wx, wy);
         int x = sx0 + sx * cell, y = sy0 + sy * cell;
         Color c = grass;
         if (t == TILE_WALL) c = wall; else if (t == TILE_TREE) c = tree; else if (t == TILE_WATER) c = water;
         else if (t == TILE_PATH) c = path; else if (t == TILE_RUINS) c = ruins; else if (t == TILE_SAND) c = sand;
+        else if (t == TILE_SNOW) c = snow; else if (t == TILE_MUD) c = mud;
         DrawRectangle(x, y, cell - 1, cell - 1, c);
         if (t == TILE_WALL) { DrawRectangle(x + 4, y + 4, cell - 9, cell - 9, DARK); DrawLine(x + 3, y + cell / 2, x + cell - 4, y + cell / 2, LIGHT); }
         else if (t == TILE_TREE) { DrawRectangle(x + cell / 3, y + cell / 4, cell / 3, cell / 2, Color{42, 78, 45, 255}); DrawRectangle(x + cell / 4, y + cell / 2, cell / 2, cell / 3, Color{42, 78, 45, 255}); }
@@ -415,8 +417,9 @@ void App::drawMap(const Player& me, int top, int bottom) {
     for (std::size_t i = 0; i < world_.monsters().size(); ++i) {
         const Monster& m = world_.monsters()[i]; int sx = m.x - ox, sy = m.y - oy;
         if (!m.alive || sx < 0 || sy < 0 || sx >= cols || sy >= rows) continue;
-        const char* symbols[] = {"s", "g", "S", "b", "O", "w"};
-        pixelText(symbols[std::max(0, std::min(5, m.type))], sx0 + sx * cell + cell / 4, sy0 + sy * cell + cell / 6, std::max(14, cell * 2 / 3), Color{228, 110, 95, 255});
+        const char* symbols[] = {"s", "g", "S", "b", "O", "w", "p", "c", "h", "G", "W", "B"};
+        const Color monsterColor = m.type == MOB_BOSS ? Color{255, 195, 70, 255} : Color{228, 110, 95, 255};
+        pixelText(symbols[std::max(0, std::min(11, m.type))], sx0 + sx * cell + cell / 4, sy0 + sy * cell + cell / 6, std::max(14, cell * 2 / 3), monsterColor);
     }
     for (std::size_t i = 0; i < world_.players().size(); ++i) {
         const Player& p = world_.players()[i]; int sx = p.x - ox, sy = p.y - oy;
@@ -445,9 +448,11 @@ void App::drawGame() {
     std::ostringstream stats;
     stats << "XP " << me->xp << '/' << me->level * 30 << "   GOLD " << me->gold << "   POTION " << me->potions;
     pixelText(stats.str().c_str(), 12, 65, 11, LIGHT);
+    const char* biome = biomeName(world_.biomeAt(me->x, me->y));
+    pixelText(biome, 12, 79, 11, LIGHT);
 
     const int controlTop = h - 220;
-    if (!inventoryOpen_) drawMap(*me, 84, controlTop - 8);
+    if (!inventoryOpen_) drawMap(*me, 96, controlTop - 8);
     else {
         const int panelX = 12, panelY = 90, panelW = w - 24, panelH = std::max(180, controlTop - panelY - 8);
         DrawRectangle(panelX, panelY, panelW, panelH, DARK);

@@ -11,7 +11,7 @@ namespace nbapp {
 Player::Player() : id(0), name("Player"), classId(CLASS_WARRIOR), x(WORLD_W / 2), y(WORLD_H / 2),
     hp(100), maxHp(100), mana(40), maxMana(40), level(1), xp(0), gold(0), potions(2), alive(true),
     inputDx(0), inputDy(0), facingDx(0), facingDy(1), moveTimer(0.0f), skillCooldown(0.0f), manaRegenTimer(0.0f) {}
-Monster::Monster() : id(0), x(0), y(0), hp(10), maxHp(10), type(MOB_SLIME), alive(true) {}
+Monster::Monster() : id(0), x(0), y(0), hp(10), maxHp(10), type(MOB_SLIME), alive(true), moveTimer(0.0f), attackTimer(0.0f) {}
 Loot::Loot() : id(0), x(0), y(0), type(LOOT_GOLD), amount(1), itemType(ITEM_NONE), rarity(0), power(0), active(true) {}
 
 const char* className(int id) {
@@ -30,7 +30,24 @@ const char* monsterName(int id) {
         case MOB_BAT: return "Летучая мышь";
         case MOB_ORC: return "Орк";
         case MOB_WOLF: return "Волк";
+        case MOB_SPIDER: return "Паук";
+        case MOB_SCORPION: return "Скорпион";
+        case MOB_SHAMAN: return "Шаман";
+        case MOB_GOLEM: return "Голем";
+        case MOB_WRAITH: return "Призрак";
+        case MOB_BOSS: return "Хранитель";
         default: return "Слизень";
+    }
+}
+
+const char* biomeName(int id) {
+    switch (id) {
+        case BIOME_FOREST: return "ЛЕС";
+        case BIOME_DESERT: return "ПУСТЫНЯ";
+        case BIOME_SWAMP: return "БОЛОТО";
+        case BIOME_TUNDRA: return "ТУНДРА";
+        case BIOME_RUINS: return "РУИНЫ";
+        default: return "ЛУГА";
     }
 }
 
@@ -66,7 +83,7 @@ int itemSlot(int type) {
     return -1;
 }
 
-World::World() : seed_(1), tick_(0), nextMonsterId_(1), nextLootId_(1), monsterAccumulator_(0.0f) {
+World::World() : seed_(1), tick_(0), nextMonsterId_(1), nextLootId_(1) {
     for (int y = 0; y < WORLD_H; ++y)
         for (int x = 0; x < WORLD_W; ++x) tiles_[y][x] = TILE_GRASS;
 }
@@ -76,26 +93,39 @@ void World::generate(uint32_t seed) {
     tick_ = 0;
     nextMonsterId_ = 1;
     nextLootId_ = 1;
-    monsterAccumulator_ = 0.0f;
     players_.clear(); monsters_.clear(); loot_.clear();
     std::mt19937 rng(seed_);
 
-    // Base terrain: coherent patches rather than isolated random obstacles.
+    // Each 24x24 region has a deterministic biome derived from the world seed.
+    // Every client with the same seed reconstructs the same static terrain.
     for (int y = 0; y < WORLD_H; ++y) {
         for (int x = 0; x < WORLD_W; ++x) {
             if (x == 0 || y == 0 || x == WORLD_W - 1 || y == WORLD_H - 1) {
                 tiles_[y][x] = TILE_WALL;
                 continue;
             }
-            const int dx = x - WORLD_W / 2, dy = y - WORLD_H / 2;
-            const int d = std::abs(dx) + std::abs(dy);
+            const int biome = biomeAt(x, y);
             const int roll = static_cast<int>(rng() % 100);
-            if (d < 9) tiles_[y][x] = TILE_GRASS;
-            else if (roll < 7) tiles_[y][x] = TILE_WATER;
-            else if (roll < 18) tiles_[y][x] = TILE_TREE;
-            else if (roll < 23) tiles_[y][x] = TILE_SAND;
-            else if (roll < 28) tiles_[y][x] = TILE_RUINS;
-            else tiles_[y][x] = TILE_GRASS;
+            switch (biome) {
+                case BIOME_FOREST:
+                    tiles_[y][x] = roll < 30 ? TILE_TREE : (roll < 34 ? TILE_WATER : TILE_GRASS);
+                    break;
+                case BIOME_DESERT:
+                    tiles_[y][x] = roll < 56 ? TILE_SAND : (roll < 62 ? TILE_WALL : TILE_GRASS);
+                    break;
+                case BIOME_SWAMP:
+                    tiles_[y][x] = roll < 28 ? TILE_WATER : (roll < 64 ? TILE_MUD : (roll < 73 ? TILE_TREE : TILE_GRASS));
+                    break;
+                case BIOME_TUNDRA:
+                    tiles_[y][x] = roll < 76 ? TILE_SNOW : (roll < 84 ? TILE_WALL : TILE_GRASS);
+                    break;
+                case BIOME_RUINS:
+                    tiles_[y][x] = roll < 31 ? TILE_RUINS : (roll < 42 ? TILE_WALL : TILE_GRASS);
+                    break;
+                default:
+                    tiles_[y][x] = roll < 10 ? TILE_TREE : (roll < 15 ? TILE_SAND : TILE_GRASS);
+                    break;
+            }
         }
     }
 
@@ -144,21 +174,53 @@ void World::generate(uint32_t seed) {
         Monster m;
         m.id = nextMonsterId_++;
         m.x = x; m.y = y;
+        const int biome = biomeAt(x, y);
         int roll = static_cast<int>(rng() % 100);
-        if (distance > 38 && roll < 16) m.type = MOB_ORC;
-        else if (distance > 26 && roll < 30) m.type = MOB_SKELETON;
-        else if (roll < 16) m.type = MOB_WOLF;
-        else if (roll < 34) m.type = MOB_GOBLIN;
+        if (biome == BIOME_FOREST && roll < 28) m.type = MOB_SPIDER;
+        else if (biome == BIOME_FOREST && roll < 45) m.type = MOB_WOLF;
+        else if (biome == BIOME_DESERT && roll < 36) m.type = MOB_SCORPION;
+        else if (biome == BIOME_SWAMP && roll < 28) m.type = MOB_SHAMAN;
+        else if (biome == BIOME_SWAMP && roll < 48) m.type = MOB_SPIDER;
+        else if (biome == BIOME_TUNDRA && roll < 32) m.type = MOB_WRAITH;
+        else if (biome == BIOME_RUINS && roll < 34) m.type = MOB_GOLEM;
+        else if (distance > 38 && roll < 24) m.type = MOB_ORC;
+        else if (distance > 26 && roll < 42) m.type = MOB_SKELETON;
+        else if (roll < 18) m.type = MOB_WOLF;
+        else if (roll < 36) m.type = MOB_GOBLIN;
         else if (roll < 52) m.type = MOB_BAT;
         else m.type = MOB_SLIME;
         int danger = std::max(0, (distance - 12) / 18);
         m.maxHp = 9 + danger * 5;
         if (m.type == MOB_ORC) m.maxHp += 15;
-        if (m.type == MOB_SKELETON) m.maxHp += 6;
-        if (m.type == MOB_WOLF) m.maxHp += 3;
+        if (m.type == MOB_SKELETON || m.type == MOB_GOLEM) m.maxHp += 8;
+        if (m.type == MOB_WOLF || m.type == MOB_SPIDER || m.type == MOB_SCORPION) m.maxHp += 3;
+        if (m.type == MOB_WRAITH || m.type == MOB_SHAMAN) m.maxHp += 7;
         m.hp = m.maxHp;
+        m.moveTimer = static_cast<float>(rng() % 300) / 1000.0f;
+        m.attackTimer = 0.25f;
         monsters_.push_back(m);
     }
+    // One map guardian waits far from the starting clearing.
+    int bossX = WORLD_W - 8, bossY = WORLD_H - 8;
+    bool bossPlaced = false;
+    for (int radius = 0; radius < 24 && !bossPlaced; ++radius) {
+        for (int oy = -radius; oy <= radius && !bossPlaced; ++oy) {
+            for (int ox = -radius; ox <= radius && !bossPlaced; ++ox) {
+                const int x = bossX + ox, y = bossY + oy;
+                if (x < 2 || y < 2 || x >= WORLD_W - 2 || y >= WORLD_H - 2) continue;
+                if (std::abs(x - cx) + std::abs(y - cy) < 48) continue;
+                if (!isWalkable(x, y) || monsterAt(x, y)) continue;
+                Monster boss;
+                boss.id = nextMonsterId_++;
+                boss.x = x; boss.y = y; boss.type = MOB_BOSS;
+                boss.maxHp = 180; boss.hp = boss.maxHp;
+                boss.moveTimer = 0.6f; boss.attackTimer = 1.0f;
+                monsters_.push_back(boss);
+                bossPlaced = true;
+            }
+        }
+    }
+
     for (int i = 0; i < 42; ++i) {
         int x = 3 + static_cast<int>(rng() % (WORLD_W - 6));
         int y = 3 + static_cast<int>(rng() % (WORLD_H - 6));
@@ -222,6 +284,14 @@ Player* World::findPlayer(int id) {
 int World::tileAt(int x, int y) const {
     if (x < 0 || y < 0 || x >= WORLD_W || y >= WORLD_H) return TILE_WALL;
     return tiles_[y][x];
+}
+int World::biomeAt(int x, int y) const {
+    if (x < 0 || y < 0 || x >= WORLD_W || y >= WORLD_H) return BIOME_RUINS;
+    const uint32_t bx = static_cast<uint32_t>(x / 24);
+    const uint32_t by = static_cast<uint32_t>(y / 24);
+    uint32_t h = seed_ ^ (bx * 0x9E3779B9u) ^ (by * 0x85EBCA6Bu);
+    h ^= h >> 16; h *= 0x7FEB352Du; h ^= h >> 15; h *= 0x846CA68Bu; h ^= h >> 16;
+    return static_cast<int>(h % 6u);
 }
 bool World::isWalkable(int x, int y) const {
     const int t = tileAt(x, y);
@@ -363,6 +433,14 @@ void World::damageMonster(Player& p, Monster& m, int damage) {
     addXp(p, 9 + m.maxHp / 2);
     p.gold += 1 + (m.type == MOB_ORC ? 5 : 0);
     if (p.classId == CLASS_NECROMANCER) p.hp = std::min(p.maxHp, p.hp + 6);
+    if (m.type == MOB_BOSS) {
+        const int rewardType = p.classId == CLASS_ARCHER ? ITEM_BOW : (p.classId == CLASS_MAGE ? ITEM_STAFF :
+            (p.classId == CLASS_NECROMANCER ? ITEM_TOTEM : ITEM_SWORD));
+        spawnLoot(m.x, m.y, LOOT_EQUIPMENT, 1, rewardType, RARITY_EPIC, 12);
+        spawnLoot(m.x, m.y, LOOT_GOLD, 80);
+        spawnLoot(m.x, m.y, LOOT_POTION, 3);
+        return;
+    }
     const int roll = static_cast<int>((m.id * 17u + static_cast<unsigned>(tick_) * 31u + seed_) % 20u);
     if (roll == 0 && loot_.size() < 256) {
         const int itemRoll = static_cast<int>((m.id + tick_) % 9);
@@ -458,32 +536,126 @@ void World::moveMonster(Monster& m, const Player& target) {
     }
 }
 
-void World::moveMonsters() {
+float World::monsterMoveInterval(int type) const {
+    switch (type) {
+        case MOB_SPIDER: case MOB_BAT: case MOB_WOLF: return 0.30f;
+        case MOB_GOLEM: return 0.78f;
+        case MOB_BOSS: return 0.72f;
+        case MOB_SHAMAN: return 0.56f;
+        default: return 0.43f;
+    }
+}
+
+float World::monsterAttackInterval(int type) const {
+    switch (type) {
+        case MOB_SHAMAN: return 1.45f;
+        case MOB_SCORPION: return 1.15f;
+        case MOB_BOSS: return 1.10f;
+        case MOB_GOLEM: return 1.25f;
+        case MOB_WRAITH: return 0.95f;
+        default: return 0.90f;
+    }
+}
+
+void World::attackPlayer(Monster& monster, Player& player) {
+    if (!player.alive) return;
+    int damage = 3;
+    switch (monster.type) {
+        case MOB_GOBLIN: damage = 5; break;
+        case MOB_SKELETON: damage = 7; break;
+        case MOB_BAT: damage = 4; break;
+        case MOB_ORC: damage = 11; break;
+        case MOB_WOLF: damage = 6; break;
+        case MOB_SPIDER: damage = 5; break;
+        case MOB_SCORPION: damage = 8; break;
+        case MOB_SHAMAN: damage = 7; break;
+        case MOB_GOLEM: damage = 14; break;
+        case MOB_WRAITH: damage = 8; break;
+        case MOB_BOSS: damage = 19; break;
+        default: damage = 3; break;
+    }
+    damage = std::max(1, damage - armorDefense(player));
+    player.hp -= damage;
+    if (monster.type == MOB_SPIDER && player.hp > 0) player.hp = std::max(1, player.hp - 2);
+    if (monster.type == MOB_WRAITH && monster.hp < monster.maxHp)
+        monster.hp = std::min(monster.maxHp, monster.hp + std::max(1, damage / 3));
+    if (monster.type == MOB_BOSS) {
+        // The guardian strikes every adjacent player, not only the selected target.
+        for (std::size_t i = 0; i < players_.size(); ++i) {
+            Player& nearby = players_[i];
+            if (&nearby == &player || !nearby.alive) continue;
+            if (std::abs(nearby.x - monster.x) + std::abs(nearby.y - monster.y) == 1) {
+                int splash = std::max(1, 10 - armorDefense(nearby));
+                nearby.hp -= splash;
+                if (nearby.hp <= 0) { nearby.hp = 0; nearby.alive = false; nearby.inputDx = nearby.inputDy = 0; }
+            }
+        }
+    }
+    if (player.hp <= 0) {
+        player.hp = 0; player.alive = false; player.inputDx = player.inputDy = 0;
+    }
+}
+
+void World::moveMonsters(float deltaSeconds) {
+    const float dt = std::max(0.0f, std::min(deltaSeconds, 0.25f));
     for (std::size_t i = 0; i < monsters_.size(); ++i) {
         Monster& m = monsters_[i];
         if (!m.alive) continue;
+        m.moveTimer -= dt;
+        m.attackTimer -= dt;
         const Player* target = 0;
         int best = 100000;
         for (std::size_t p = 0; p < players_.size(); ++p) {
             if (!players_[p].alive) continue;
-            int d = std::abs(players_[p].x - m.x) + std::abs(players_[p].y - m.y);
+            const int d = std::abs(players_[p].x - m.x) + std::abs(players_[p].y - m.y);
             if (d < best) { best = d; target = &players_[p]; }
         }
         if (!target || best > 9) continue;
-        if (best == 1) {
-            Player* victim = 0;
-            for (std::size_t p = 0; p < players_.size(); ++p) {
-                Player& candidate = players_[p];
-                if (!candidate.alive || std::abs(candidate.x - m.x) + std::abs(candidate.y - m.y) != 1) continue;
-                if (!victim || candidate.hp < victim->hp) victim = &candidate;
+        Player* victim = 0;
+        for (std::size_t p = 0; p < players_.size(); ++p) {
+            Player& candidate = players_[p];
+            if (!candidate.alive) continue;
+            const int d = std::abs(candidate.x - m.x) + std::abs(candidate.y - m.y);
+            if (d == 1 && (!victim || candidate.hp < victim->hp)) victim = &candidate;
+        }
+        if (victim) {
+            if (m.attackTimer <= 0.0f) {
+                attackPlayer(m, *victim);
+                m.attackTimer = monsterAttackInterval(m.type);
             }
-            if (victim) {
-                int damage = 3 + (m.type == MOB_ORC ? 7 : (m.type == MOB_SKELETON ? 4 : 0));
-                damage = std::max(1, damage - armorDefense(*victim));
-                victim->hp -= damage;
-                if (victim->hp <= 0) { victim->hp = 0; victim->alive = false; victim->inputDx = victim->inputDy = 0; }
+            continue;
+        }
+        // Shamans and scorpions hold distance and attack along a clear row/column.
+        const int dx = target->x - m.x, dy = target->y - m.y;
+        const bool aligned = (dx == 0 || dy == 0);
+        const bool ranged = (m.type == MOB_SHAMAN || m.type == MOB_SCORPION);
+        bool clearShot = aligned;
+        if (clearShot) {
+            const int steps = std::max(std::abs(dx), std::abs(dy));
+            const int sx = dx == 0 ? 0 : (dx > 0 ? 1 : -1);
+            const int sy = dy == 0 ? 0 : (dy > 0 ? 1 : -1);
+            for (int step = 1; step < steps; ++step)
+                if (!isWalkable(m.x + sx * step, m.y + sy * step)) { clearShot = false; break; }
+        }
+        if (ranged && clearShot && best >= 2 && best <= 4) {
+            if (m.attackTimer <= 0.0f) {
+                Player* rangedTarget = findPlayer(target->id);
+                if (rangedTarget && rangedTarget->alive) {
+                    int damage = m.type == MOB_SHAMAN ? 7 : 8;
+                    rangedTarget->hp -= std::max(1, damage - armorDefense(*rangedTarget));
+                    if (rangedTarget->hp <= 0) {
+                        rangedTarget->hp = 0; rangedTarget->alive = false;
+                        rangedTarget->inputDx = rangedTarget->inputDy = 0;
+                    }
+                }
+                m.attackTimer = monsterAttackInterval(m.type);
             }
-        } else moveMonster(m, *target);
+            continue;
+        }
+        if (m.moveTimer <= 0.0f) {
+            moveMonster(m, *target);
+            m.moveTimer = monsterMoveInterval(m.type);
+        }
     }
 }
 
@@ -505,11 +677,7 @@ void World::update(float deltaSeconds) {
             p.moveTimer = speed;
         }
     }
-    monsterAccumulator_ += dt;
-    while (monsterAccumulator_ >= 0.42f) {
-        monsterAccumulator_ -= 0.42f;
-        moveMonsters();
-    }
+    moveMonsters(dt);
 }
 
 static std::vector<std::string> split(const std::string& s, char delimiter) {
@@ -641,8 +809,8 @@ bool World::deserializeSnapshot(const std::string& input) {
         int a[6]; for (int j = 0; j < 6; ++j) if (!parseNumber(v[static_cast<std::size_t>(j)], a[j])) return false;
         Monster m; m.id=a[0]; m.x=a[1]; m.y=a[2]; m.hp=a[3]; m.maxHp=a[4]; m.type=a[5];
         if (m.id < 0 || m.x < 0 || m.x >= WORLD_W || m.y < 0 || m.y >= WORLD_H ||
-            m.hp < 1 || m.maxHp < m.hp || m.type < MOB_SLIME || m.type > MOB_WOLF || parsedMonsters.size() >= 4096) return false;
-        m.alive = true; parsedMonsters.push_back(m);
+            m.hp < 1 || m.maxHp < m.hp || m.type < MOB_SLIME || m.type > MOB_BOSS || parsedMonsters.size() >= 4096) return false;
+        m.alive = true; m.moveTimer = monsterMoveInterval(m.type); m.attackTimer = 0.35f; parsedMonsters.push_back(m);
     }
     rows = split(f[6], ';');
     for (std::size_t i = 0; i < rows.size(); ++i) {
