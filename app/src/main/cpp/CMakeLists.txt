@@ -21,7 +21,7 @@ set(WITH_PIC ON CACHE BOOL "Build static dependencies as PIC" FORCE)
 FetchContent_Declare(
     raylib
     GIT_REPOSITORY https://github.com/raysan5/raylib.git
-    GIT_TAG c1ab645ca298a2801097931d1079b10ff7eb9df8
+    GIT_TAG 5.5
     GIT_SHALLOW TRUE
 )
 FetchContent_MakeAvailable(raylib)
